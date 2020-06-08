@@ -42,6 +42,7 @@ public class ConnectDevice extends AppCompatActivity {
     ArrayList<String> deviceNames = new ArrayList<>();
     ArrayList<String> deviceAddresses = new ArrayList<>();
     ArrayList<String> devicesDisplay = new ArrayList<>();
+    public ArrayList<BluetoothDevice> mBTDevices = new ArrayList<>();
     ArrayAdapter devicesArrayAdapter;
 
     // Create a BroadcastReceiver for ACTION_FOUND
@@ -88,6 +89,7 @@ public class ConnectDevice extends AppCompatActivity {
                 if(!(deviceAddresses.contains(deviceAddress))){
                     deviceAddresses.add(deviceAddress);
                     deviceNames.add(deviceName);
+                    mBTDevices.add(device);
                     if(deviceName != null){
                         devicesDisplay.add(deviceName+" - " + deviceAddress);
                     } else {
@@ -96,16 +98,6 @@ public class ConnectDevice extends AppCompatActivity {
                 }
 
                 lstDevices.setAdapter(devicesArrayAdapter);
-
-                lstDevices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                        Toast.makeText(getApplicationContext(), devicesDisplay.get(i), Toast.LENGTH_SHORT).show();
-
-                    }
-                });
-
 
                 System.out.println(deviceAddresses);
             }
@@ -118,10 +110,44 @@ public class ConnectDevice extends AppCompatActivity {
         }
     };
 
+    /**
+     * Broadcast Receiver that detects bond state changes (Pairing status changes)
+     */
+    private final BroadcastReceiver mBroadcastReceiver4 = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+
+            if(action.equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)){
+                BluetoothDevice mDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                //3 cases:
+                //case1: bonded already
+                if (mDevice.getBondState() == BluetoothDevice.BOND_BONDED){
+                    Log.d("", "BroadcastReceiver: BOND_BONDED.");
+                }
+                //case2: creating a bone
+                if (mDevice.getBondState() == BluetoothDevice.BOND_BONDING) {
+                    Log.d("", "BroadcastReceiver: BOND_BONDING.");
+                }
+                //case3: breaking a bond
+                if (mDevice.getBondState() == BluetoothDevice.BOND_NONE) {
+                    Log.d("", "BroadcastReceiver: BOND_NONE.");
+                }
+            }
+        }
+    };
+
     @Override
     protected void onDestroy() {
         Log.d("Msg", "onDestroy: called.");
         super.onDestroy();
+        try {
+            unregisterReceiver(mBroadcastReceiver1);
+            unregisterReceiver(mBroadcastReceiver3);
+            unregisterReceiver(mBroadcastReceiver4);
+        } catch (Exception e) {
+            Log.i("", "Receivers unregistered.");
+        }
     }
 
     @Override
@@ -165,6 +191,25 @@ public class ConnectDevice extends AppCompatActivity {
         devicesArrayAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, devicesDisplay);
         //get default adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        //Broadcasts when bond state changes (ie:pairing)
+        try {
+            IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+            registerReceiver(mBroadcastReceiver4, filter);
+        } catch (Exception e){
+            Log.i("","Receiver registered.");
+        }
+        //on click of BT device, do pairing
+        lstDevices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if(deviceNames.get(i) != null){
+                    Toast.makeText(getApplicationContext(), "Pairing to "+devicesDisplay.get(i), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Pairing to " + deviceAddresses.get(i), Toast.LENGTH_SHORT).show();
+                }
+                pairDevice(i);
+            }
+        });
 
     }
 
@@ -259,6 +304,17 @@ public class ConnectDevice extends AppCompatActivity {
             }
         }else{
             Log.d("", "checkBTPermissions: No need to check permissions. SDK version < LOLLIPOP.");
+        }
+    }
+
+    private void pairDevice(int deviceIndex){
+        //first cancel discovery because its very memory intensive.
+        mBluetoothAdapter.cancelDiscovery();
+
+        //create the bond.
+        //NOTE: Requires API 17+? I think this is JellyBean
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2){
+            mBTDevices.get(deviceIndex).createBond();
         }
     }
 
