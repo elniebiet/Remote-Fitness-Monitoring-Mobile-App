@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="titleStyles">
+        <!--<item name="android:fontFamily" tools:targetApi="jelly_bean">@font/aclonica</item>-->
+        <item name="fontFamily">@font/aclonica</item>
+        <item name="android:textSize">@dimen/titleSize</item>
+
+    </style>
+</resources>

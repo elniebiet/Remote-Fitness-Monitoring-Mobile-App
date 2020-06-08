@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.fitnessmonitor.fitnessmonitor.ExerciseRunning">
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:columnCount="1"
+        android:rowCount="6"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <FrameLayout
+            android:id="@+id/flCounting"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_column="0"
+            android:layout_row="3"
+            android:visibility="invisible">
+
+            <TextView
+                android:id="@+id/lblProgress"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="70dp"
+                android:text="Progress: "
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txtProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="160dp"
+                android:text="0.0 / 1.0 km"
+                android:textSize="30sp" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/flBack"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_column="0"
+            android:layout_row="0">
+
+            <Button
+                android:id="@+id/btnBack"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                android:onClick="goBackHome"
+                android:text="Back"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/flRunning"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_column="0"
+            android:layout_row="1">
+
+            <TextView
+                android:id="@+id/lblRunning"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Running"
+                android:textAlignment="center"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/flTarget"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_column="0"
+            android:layout_row="2">
+
+            <TextView
+                android:id="@+id/lblTarget"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="80dp"
+                android:text="Target :"
+                android:textSize="18sp" />
+
+            <Spinner
+                android:id="@+id/spnTarget"
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="170dp" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/flCount"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_column="0"
+            android:layout_row="3"
+            android:visibility="visible">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </FrameLayout>
+
+            <Button
+                android:id="@+id/btnPlus"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="60dp"
+                android:text="+"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtCount"
+                android:layout_width="100dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="150dp"
+                android:text="1.0"
+                android:textAlignment="center"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnMinus"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="280dp"
+                android:text="-"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtUnit"
+                android:layout_width="30dp"
+                android:layout_height="15dp"
+                android:layout_marginLeft="190dp"
+                android:layout_marginTop="25dp"
+                android:text="km" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/flMap"
+            android:layout_width="match_parent"
+            android:layout_height="450dp"
+            android:layout_column="0"
+            android:layout_row="4"
+            android:background="@color/colorAsh">
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/flStart"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_column="0"
+            android:layout_row="5">
+
+            <Button
+                android:id="@+id/btnStart"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="100dp"
+                android:text="Start"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:layout_editor_absoluteX="146dp"
+                tools:layout_editor_absoluteY="650dp" />
+        </FrameLayout>
+    </GridLayout>
+
+</android.support.constraint.ConstraintLayout>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:minHeight="129dp"
+    tools:context="com.example.fitnessmonitor.fitnessmonitor.StatActivity">
+
+    <FrameLayout
+        android:id="@+id/statusActMainFrame"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <FrameLayout
+            android:id="@+id/frmBackButton"
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
+
+            <Button
+                android:id="@+id/btnBack"
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:onClick="goBackHome"
+                android:text="Back"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/frmCanvas"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginTop="200dp"
+            android:background="@color/colorAsh">
+
+            <TextView
+                android:id="@+id/lblHourlyBreakDown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Hourly Breakdown"
+                android:textAlignment="center"
+                android:textSize="18sp" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/frmDistanceCovered"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="370dp">
+
+            <TextView
+                android:id="@+id/lblDistance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:text="Distance"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txtDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="30dp"
+                android:text="0.00 km"
+                android:textSize="30sp" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/frmCalories"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="490dp">
+
+            <TextView
+                android:id="@+id/lblCalories"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Calories burnt"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txtCalories"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="30dp"
+                android:text="0 kcal"
+                android:textSize="30sp" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/frmDailySteps"
+            android:layout_width="379dp"
+            android:layout_height="146dp"
+            android:layout_marginTop="50dp"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="571dp">
+
+            <TextView
+                android:id="@+id/txtStepsToday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:text="0/6000"
+                android:textAlignment="center"
+                android:textSize="40sp" />
+
+            <TextView
+                android:id="@+id/lblDailySteps"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="90dp"
+                android:text="Daily Steps"
+                android:textAlignment="center"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/lblToday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Today"
+                android:textAlignment="center"
+                android:textSize="18sp" />
+        </FrameLayout>
+
+    </FrameLayout>
+
+</android.support.constraint.ConstraintLayout>
