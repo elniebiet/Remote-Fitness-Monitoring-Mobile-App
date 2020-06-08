@@ -1,5 +1,6 @@
 package com.example.fitnessmonitor.fitnessmonitor;
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -14,12 +15,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Point;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -36,9 +39,10 @@ public class ConnectDevice extends AppCompatActivity {
     BluetoothAdapter mBluetoothAdapter;
 
     ListView lstDevices;
-    ArrayList<String> bluetoothDevices = new ArrayList<>();
-    ArrayList<String> addresses = new ArrayList<>();
-    ArrayAdapter arrayAdapter;
+    ArrayList<String> deviceNames = new ArrayList<>();
+    ArrayList<String> deviceAddresses = new ArrayList<>();
+    ArrayList<String> devicesDisplay = new ArrayList<>();
+    ArrayAdapter devicesArrayAdapter;
 
     // Create a BroadcastReceiver for ACTION_FOUND
     private final BroadcastReceiver mBroadcastReceiver1 = new BroadcastReceiver() {
@@ -66,54 +70,59 @@ public class ConnectDevice extends AppCompatActivity {
         }
     };
 
+    /**
+     * Broadcast Receiver for listing devices that are not yet paired
+     * -Executed by btnDiscover() method.
+     */
+    private BroadcastReceiver mBroadcastReceiver3 = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            Log.d("Msg", "onReceive: ACTION FOUND."+ action);
+            if (action.equals(BluetoothDevice.ACTION_FOUND)){
+                BluetoothDevice device = intent.getParcelableExtra (BluetoothDevice.EXTRA_DEVICE);
+                //add device to list
+                String deviceName = device.getName();
+                String deviceAddress = device.getAddress();
+                Log.d("Msg", "onReceive: " + deviceName + ": " + deviceAddress);
+                if(!(deviceAddresses.contains(deviceAddress))){
+                    deviceAddresses.add(deviceAddress);
+                    deviceNames.add(deviceName);
+                    if(deviceName != null){
+                        devicesDisplay.add(deviceName+" - " + deviceAddress);
+                    } else {
+                        devicesDisplay.add(deviceAddress);
+                    }
+                }
+
+                lstDevices.setAdapter(devicesArrayAdapter);
+
+                lstDevices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                        Toast.makeText(getApplicationContext(), devicesDisplay.get(i), Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+
+
+                System.out.println(deviceAddresses);
+            }
+            if (action.equals(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)){
+                btnSearch.setClickable(true);
+                btnSearch.setText("Search");
+                Toast.makeText(getApplicationContext(), "Search complete. ("+devicesDisplay.size()+ ") devices found.", Toast.LENGTH_SHORT).show();
+
+            }
+        }
+    };
+
     @Override
     protected void onDestroy() {
         Log.d("Msg", "onDestroy: called.");
         super.onDestroy();
-        unregisterReceiver(mBroadcastReceiver1);
     }
-
-//    static final UUID mUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-//    ListView lstDevices;
-//    TextView statusTextView;
-//    Button btnSearch;
-//    ArrayList<String> bluetoothDevices = new ArrayList<>();
-//    ArrayList<String> addresses = new ArrayList<>();
-//    ArrayAdapter arrayAdapter;
-//
-//    BluetoothAdapter bluetoothAdapter;
-
-//    private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            String action = intent.getAction();
-//            Log.i("Action",action);
-//
-//            if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-//                Log.i("Msg","finished");
-//                btnSearch.setEnabled(true);
-//            } else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-//                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-//                String name = device.getName();
-//                String address = device.getAddress();
-//                String rssi = Integer.toString(intent.getShortExtra(BluetoothDevice.EXTRA_RSSI,Short.MIN_VALUE));
-//                Log.i("Device Found","Name: " + name + " Address: " + address + " RSSI: " + rssi);
-//
-//                if (!addresses.contains(address)) {
-//                    addresses.add(address);
-//                    String deviceString = "";
-//                    if (name == null || name.equals("")) {
-//                        deviceString = address + " - RSSI " + rssi + "dBm";
-//                    } else {
-//                        deviceString = name + " - RSSI " + rssi + "dBm";
-//                    }
-//
-//                    bluetoothDevices.add(deviceString);
-//                    arrayAdapter.notifyDataSetChanged();
-//                }
-//            }
-//        }
-//    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,25 +160,11 @@ public class ConnectDevice extends AppCompatActivity {
 
         btnSearch = (Button)findViewById(R.id.btnSearch);
         btnOnOff = (Button)findViewById(R.id.btnTurnOnOff);
+        lstDevices = findViewById(R.id.lstDevices);
+        //create array adapter
+        devicesArrayAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, devicesDisplay);
         //get default adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-//        lstDevices = findViewById(R.id.lstDevices);
-////        statusTextView = findViewById(R.id.statusTextView);
-//        btnSearch = findViewById(R.id.btnSearch);
-//
-//        arrayAdapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1,bluetoothDevices);
-//
-//        lstDevices.setAdapter(arrayAdapter);
-//
-//        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-//
-//        IntentFilter intentFilter = new IntentFilter();
-//        intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-//        intentFilter.addAction(BluetoothDevice.ACTION_FOUND);
-//        intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
-//        intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-//        registerReceiver(broadcastReceiver, intentFilter);
 
     }
 
@@ -187,28 +182,40 @@ public class ConnectDevice extends AppCompatActivity {
     }
 
     public void searchDevices(View view){
-        btnSearch.setText("Searching...");
-        btnSearch.setClickable(false);
+        //clear the list
+        deviceNames.clear();
+        deviceAddresses.clear();
+        devicesDisplay.clear();
+        //check if bluetooth is on, then list devices
+        if(!(mBluetoothAdapter == null)){ //first check if device has BT
+            if(mBluetoothAdapter.isEnabled()){
+                btnSearch.setText("Searching...");
+                btnSearch.setClickable(false);
+                discoverDevices();
+            }else {
+                Toast.makeText(getApplicationContext(), "Please Turn on Bluetooth", Toast.LENGTH_SHORT).show();
+            }
+        }
 
-//        bluetoothDevices.clear();
-//        addresses.clear();
-//        bluetoothAdapter.startDiscovery();
     }
 
     public void onOffBT(View view){
         enableDisableBT();
     }
 
+
+    /*enable or disable BT*/
     public void enableDisableBT(){
         if(mBluetoothAdapter == null){
             Log.d("Msg", "enableDisableBT: Does not have BT capabilities.");
+            Toast.makeText(getApplicationContext(), "Device Does not have Bluetooth capabilities.", Toast.LENGTH_SHORT).show();
         }
         else if(!mBluetoothAdapter.isEnabled()){
             Log.d("Msg", "enableDisableBT: enabling BT.");
             mBluetoothAdapter.enable();
-//            startActivity(enableBTIntent);
             IntentFilter BTIntent = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
             registerReceiver(mBroadcastReceiver1, BTIntent);
+            Toast.makeText(getApplicationContext(), "Bluetooth turned on.", Toast.LENGTH_SHORT).show();
         }
         else if(mBluetoothAdapter.isEnabled()){
             Log.d("Msg", "enableDisableBT: disabling BT.");
@@ -216,8 +223,43 @@ public class ConnectDevice extends AppCompatActivity {
 
             IntentFilter BTIntent = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
             registerReceiver(mBroadcastReceiver1, BTIntent);
+            Toast.makeText(getApplicationContext(), "Bluetooth turned off.", Toast.LENGTH_SHORT).show();
+
         }
 
+    }
+
+    /*Discover devices*/
+    public void discoverDevices() {
+        Log.d("", "btnDiscover: Looking for unpaired devices.");
+            //check BT permissions in manifest
+            checkBTPermissions();
+
+            mBluetoothAdapter.startDiscovery();
+            IntentFilter discoverDevicesIntent = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+            discoverDevicesIntent.addAction(BluetoothDevice.ACTION_FOUND);
+            discoverDevicesIntent.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+            discoverDevicesIntent.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+            registerReceiver(mBroadcastReceiver3, discoverDevicesIntent);
+    }
+
+    /**
+     * This method is required for all devices running API23+
+     * Android must programmatically check the permissions for bluetooth. Putting the proper permissions
+     * in the manifest is not enough.
+     *
+     * NOTE: This will only execute on versions > LOLLIPOP because it is not needed otherwise.
+     */
+    private void checkBTPermissions() {
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP){
+            int permissionCheck = this.checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
+            permissionCheck += this.checkSelfPermission("Manifest.permission.ACCESS_COARSE_LOCATION");
+            if (permissionCheck != 0) {
+                this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001); //Any number
+            }
+        }else{
+            Log.d("", "checkBTPermissions: No need to check permissions. SDK version < LOLLIPOP.");
+        }
     }
 
 }
