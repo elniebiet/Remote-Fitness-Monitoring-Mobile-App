@@ -23,6 +23,7 @@ import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.example.fitnessmonitor.fitnessmonitor.GetReadings;
 
 import static android.widget.FrameLayout.*;
 
@@ -73,7 +74,7 @@ public class MainActivity extends AppCompatActivity
         flStatusLayoutParams.height = statusCellHeight;//(int)(grdMainHeight * 0.9);
         flStatus.setLayoutParams(flStatusLayoutParams);
         //set active cell height
-        int activeCellHeight = (int)(glHeight/5 - 0.035*glHeight);
+        int activeCellHeight = (int)(glHeight/4.5 - 0.035*glHeight);
         FrameLayout flActive = (FrameLayout) findViewById(R.id.frmActive);
         ViewGroup.LayoutParams flActiveLayoutParams = flActive.getLayoutParams();
         flActiveLayoutParams.height = activeCellHeight;//(int)(grdMainHeight * 0.9);
@@ -88,6 +89,9 @@ public class MainActivity extends AppCompatActivity
         ViewGroup.LayoutParams flSleepLayoutParams = flSleep.getLayoutParams();
         flSleepLayoutParams.height = activeCellHeight;//(int)(grdMainHeight * 0.9);
         flSleep.setLayoutParams(flSleepLayoutParams);
+
+        GetReadings gr = new GetReadings();
+//        gr.readHC05();
 
     }
 
@@ -123,7 +127,7 @@ public class MainActivity extends AppCompatActivity
 //        return super.onOptionsItemSelected(item);
 //    }
 
-    @SuppressWarnings("StatementWithEmptyBody")
+//    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
