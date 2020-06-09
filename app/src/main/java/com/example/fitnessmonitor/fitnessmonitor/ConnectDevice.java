@@ -3,10 +3,12 @@ package com.example.fitnessmonitor.fitnessmonitor;
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothProfile;
 import android.bluetooth.BluetoothSocket;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -15,8 +17,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Build;
+import android.os.Handler;
+import android.support.annotation.DrawableRes;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,6 +32,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -38,16 +45,33 @@ public class ConnectDevice extends AppCompatActivity {
     Button btnOnOff;
 
     BluetoothAdapter mBluetoothAdapter;
-
+    FrameLayout flList;
     ListView lstDevices;
+    TextView txtConnected;
     private ArrayList<String> deviceNames = new ArrayList<>();
     private ArrayList<String> deviceAddresses = new ArrayList<>();
     private ArrayList<String> devicesDisplay = new ArrayList<>();
     public ArrayList<BluetoothDevice> mBTDevices = new ArrayList<>();
     private ArrayAdapter devicesArrayAdapter;
     private int deviceTapped = 0;
+    Set<BluetoothDevice> pairedDevices; //set returned from checking paired devices
     private ArrayList<String> alreadyPaired = new ArrayList<String>();
+    private String connectedName;
+    private String connectedAddress;
+    private String connectedThreadName;
 
+    TextView myLabel;
+    EditText myTextbox;
+    BluetoothAdapter mBluetoothAdapter2;
+    BluetoothSocket mmSocket;
+    BluetoothDevice mmDevice;
+    OutputStream mmOutputStream;
+    InputStream mmInputStream;
+    Thread workerThread;
+    byte[] readBuffer;
+    int readBufferPosition;
+    int counter;
+    volatile boolean stopWorker;
 
     // Create a BroadcastReceiver for ACTION_FOUND
     private final BroadcastReceiver mBroadcastReceiver1 = new BroadcastReceiver() {
@@ -90,22 +114,36 @@ public class ConnectDevice extends AppCompatActivity {
                 String deviceName = device.getName();
                 String deviceAddress = device.getAddress();
                 Log.d("Msg", "onReceive: " + deviceName + ": " + deviceAddress);
-                if(!(deviceAddresses.contains(deviceAddress))){
-                    deviceAddresses.add(deviceAddress);
-                    deviceNames.add(deviceName);
-                    mBTDevices.add(device);
-                    if(deviceName != null){
-                        devicesDisplay.add(deviceName+" - " + deviceAddress);
-                    } else {
-                        devicesDisplay.add(deviceAddress);
+                //check if the device is not already in the list
+                if(deviceName != null) {
+                    if (!(deviceAddresses.contains(deviceAddress)) && (deviceName.contains("HC-05") || deviceName.contains("HC-06"))) {
+                        deviceAddresses.add(deviceAddress);
+                        deviceNames.add(deviceName);
+                        mBTDevices.add(device);
+                        if (deviceName != null) {
+                            devicesDisplay.add(deviceName + " - " + deviceAddress);
+                        } else {
+                            devicesDisplay.add(deviceAddress);
+                        }
                     }
                 }
 
                 lstDevices.setAdapter(devicesArrayAdapter);
-
-                System.out.println(deviceAddresses);
             }
             if (action.equals(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)){
+                //check for already paired HC-05 OR HC-06 devices and add to list
+                for(BluetoothDevice bt: pairedDevices){
+                    if(bt.getName() != null) {
+                        if (!(deviceNames.contains("HC-05") || deviceNames.contains("HC-06")) && (bt.getName().contains("HC-05") || bt.getName().contains("HC-06"))) {
+                            deviceAddresses.add(bt.getAddress());
+                            deviceNames.add(bt.getName());
+                            devicesDisplay.add(bt.getName() + " - " + bt.getAddress());
+                            mBTDevices.add(bt);
+                            lstDevices.setAdapter(devicesArrayAdapter);
+                        }
+                    }
+                }
+
                 btnSearch.setClickable(true);
                 btnSearch.setText("Search");
 
@@ -131,7 +169,22 @@ public class ConnectDevice extends AppCompatActivity {
                 //case1: bonded already
                 if (mDevice.getBondState() == BluetoothDevice.BOND_BONDED){
                     Log.d("", "BroadcastReceiver: BOND_BONDED.");
-                    Toast.makeText(getApplicationContext(), "Pairing Complete", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Pairing Complete", Toast.LENGTH_LONG).show();
+
+                    String connectedTo = (mDevice.getName() != null) ? mDevice.getName(): ("ID - "+ mDevice.getAddress());
+                    txtConnected.setText("Connected to Device: " + connectedTo);
+                    lstDevices.setVisibility(View.INVISIBLE);
+                    flList.setBackgroundResource(R.color.colorWhite);
+                    txtConnected.setVisibility(View.VISIBLE);
+
+                    deviceAddresses.clear();
+                    deviceNames.clear();
+                    devicesDisplay.clear();
+//                    try {
+//                        openBT();
+//                    } catch (Exception e){
+//
+//                    }
                 }
                 //case2: creating a bone
                 if (mDevice.getBondState() == BluetoothDevice.BOND_BONDING) {
@@ -140,8 +193,13 @@ public class ConnectDevice extends AppCompatActivity {
                 }
                 //case3: breaking a bond
                 if (mDevice.getBondState() == BluetoothDevice.BOND_NONE) {
+                    System.out.println("CHECKING ALREADY PAIRED: "+ mDevice.getAddress());
+                    if(alreadyPaired.contains(mDevice.getAddress())){
+                        pairDevice(deviceAddresses.indexOf(mDevice.getAddress()));
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Pairing Failed, Please check that the fitness device turned on.", Toast.LENGTH_SHORT).show();
+                    }
                     Log.d("", "BroadcastReceiver: BOND_NONE.");
-                    Toast.makeText(getApplicationContext(), "Pairing Failed, Please disconnect other devices", Toast.LENGTH_SHORT).show();
 
                 }
             }
@@ -198,7 +256,7 @@ public class ConnectDevice extends AppCompatActivity {
         flMessage.setLayoutParams(flMessageLayoutParams);
         //set flList height
         int flListHeight = (int)(0.65 * height);
-        FrameLayout flList= (FrameLayout) findViewById(R.id.flList);
+        flList= (FrameLayout) findViewById(R.id.flList);
         ViewGroup.LayoutParams flListLayoutParams = flList.getLayoutParams();
         flListLayoutParams.height = flListHeight;//(int)(grdMainHeight * 0.9);
         setMargins(flList, 0,0,0,0);
@@ -206,14 +264,25 @@ public class ConnectDevice extends AppCompatActivity {
 
         btnSearch = (Button)findViewById(R.id.btnSearch);
         btnOnOff = (Button)findViewById(R.id.btnTurnOnOff);
-        lstDevices = findViewById(R.id.lstDevices);
+        lstDevices = (ListView) findViewById(R.id.lstDevices);
+        txtConnected = (TextView) findViewById(R.id.txtConnected);
         deviceTapped = 0;
+        connectedAddress = "";
+
+        lstDevices.setVisibility(View.VISIBLE);
+        flList.setBackgroundResource(R.color.colorAsh);
+
+        txtConnected.setVisibility(View.INVISIBLE);
+
+        //check connected devices
+        checkConnected();
+
         //create array adapter
         devicesArrayAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, devicesDisplay);
         //get default adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         //get already paired devices
-        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+        pairedDevices = mBluetoothAdapter.getBondedDevices();
         for(BluetoothDevice bt : pairedDevices)
             alreadyPaired.add(bt.getAddress());
 
@@ -236,7 +305,8 @@ public class ConnectDevice extends AppCompatActivity {
                 } else {
                     Toast.makeText(getApplicationContext(), "Pairing to " + deviceAddresses.get(i), Toast.LENGTH_SHORT).show();
                 }
-                pairDevice(i);
+                unpairDevice(mBTDevices.get(i)); //unpair if already paired
+                pairDevice(i); //pair
             }
         });
 
@@ -257,6 +327,10 @@ public class ConnectDevice extends AppCompatActivity {
 
     public void searchDevices(View view){
         //clear the list
+        lstDevices.setVisibility(View.VISIBLE);
+        txtConnected.setVisibility(View.INVISIBLE);
+        flList.setBackgroundResource(R.color.colorAsh);
+
         deviceNames.clear();
         deviceAddresses.clear();
         devicesDisplay.clear();
@@ -312,15 +386,15 @@ public class ConnectDevice extends AppCompatActivity {
     /*Discover devices*/
     public void discoverDevices() {
         Log.d("", "btnDiscover: Looking for unpaired devices.");
-            //check BT permissions in manifest
-            checkBTPermissions();
+        //check BT permissions in manifest
+        checkBTPermissions();
 
-            mBluetoothAdapter.startDiscovery();
-            IntentFilter discoverDevicesIntent = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-            discoverDevicesIntent.addAction(BluetoothDevice.ACTION_FOUND);
-            discoverDevicesIntent.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
-            discoverDevicesIntent.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-            registerReceiver(mBroadcastReceiver3, discoverDevicesIntent);
+        mBluetoothAdapter.startDiscovery();
+        IntentFilter discoverDevicesIntent = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        discoverDevicesIntent.addAction(BluetoothDevice.ACTION_FOUND);
+        discoverDevicesIntent.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+        discoverDevicesIntent.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        registerReceiver(mBroadcastReceiver3, discoverDevicesIntent);
     }
 
     /**
@@ -331,14 +405,18 @@ public class ConnectDevice extends AppCompatActivity {
      * NOTE: This will only execute on versions > LOLLIPOP because it is not needed otherwise.
      */
     private void checkBTPermissions() {
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP){
-            int permissionCheck = this.checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
-            permissionCheck += this.checkSelfPermission("Manifest.permission.ACCESS_COARSE_LOCATION");
-            if (permissionCheck != 0) {
-                this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001); //Any number
+        try {
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+                int permissionCheck = this.checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
+                permissionCheck += this.checkSelfPermission("Manifest.permission.ACCESS_COARSE_LOCATION");
+                if (permissionCheck != 0) {
+                    this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001); //Any number
+                }
+            } else {
+                Log.d("", "checkBTPermissions: No need to check permissions. SDK version < LOLLIPOP.");
             }
-        }else{
-            Log.d("", "checkBTPermissions: No need to check permissions. SDK version < LOLLIPOP.");
+        } catch (Exception e){
+            Log.i("", "ERROR GRANTING PERMISSION");
         }
     }
 
@@ -351,6 +429,159 @@ public class ConnectDevice extends AppCompatActivity {
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2){
             mBTDevices.get(deviceIndex).createBond();
         }
+    }
+
+    private void unpairDevice(BluetoothDevice device) {
+        try {
+            Method m = device.getClass()
+                    .getMethod("removeBond", (Class[]) null);
+            m.invoke(device, (Object[]) null);
+        } catch (Exception e) {
+            Log.e("", e.getMessage());
+        }
+    }
+
+
+    public void checkConnected()
+    {
+
+        BluetoothAdapter.getDefaultAdapter().getProfileProxy(this, serviceListener, BluetoothProfile.HEADSET);
+    }
+
+    private BluetoothProfile.ServiceListener serviceListener = new BluetoothProfile.ServiceListener()
+    {
+        @Override
+        public void onServiceDisconnected(int profile)
+        {
+
+        }
+
+        @Override
+        public void onServiceConnected(int profile, BluetoothProfile proxy)
+        {
+            BluetoothDevice device1 = null;
+            for (BluetoothDevice device : proxy.getConnectedDevices())
+            {
+                device1 = device;
+                connectedName = device.getName();
+                connectedAddress = device.getAddress();
+                connectedThreadName = Thread.currentThread().getName();
+                Log.i("onServiceConnected", "|" + connectedName + " | " + connectedAddress + " | " + connectedThreadName + "(connected = "
+                        + BluetoothProfile.STATE_CONNECTED + ")");
+
+            }
+            //if there is a connected device, display
+            if(connectedAddress != ""){
+                if(connectedName.contains("HC-05") || connectedName.contains("HC-06")){
+                    String connectedTo = (connectedName != null) ? connectedName : ("ID - "+ connectedAddress);
+                    txtConnected.setText("Connected to Device: " + connectedTo);
+                    lstDevices.setVisibility(View.INVISIBLE);
+                    flList.setBackgroundResource(R.color.colorWhite);
+                    txtConnected.setVisibility(View.VISIBLE);
+                } else {;
+                    unpairDevice(device1);
+                    lstDevices.setVisibility(View.VISIBLE);
+                    txtConnected.setVisibility(View.INVISIBLE);
+                    flList.setBackgroundResource(R.color.colorAsh);
+                }
+
+            } else {
+                lstDevices.setVisibility(View.VISIBLE);
+                txtConnected.setVisibility(View.INVISIBLE);
+                flList.setBackgroundResource(R.color.colorAsh);
+            }
+
+            BluetoothAdapter.getDefaultAdapter().closeProfileProxy(profile, proxy);
+        }
+
+//        private void resetConnection() {
+//            if (mBTInputStream != null) {
+//                try {mBTInputStream.close();} catch (Exception e) {}
+//                mBTInputStream = null;
+//            }
+//
+//            if (mBTOutputStream != null) {
+//                try {mBTOutputStream.close();} catch (Exception e) {}
+//                mBTOutputStream = null;
+//            }
+//
+//            if (mBTSocket != null) {
+//                try {mBTSocket.close();} catch (Exception e) {}
+//                mBTSocket = null;
+//            }
+//
+//        }
+    };
+
+    void openBT() throws IOException
+    {
+        UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //Standard SerialPortService ID
+        mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
+        mmSocket.connect();
+        mmOutputStream = mmSocket.getOutputStream();
+        mmInputStream = mmSocket.getInputStream();
+
+        beginListenForData();
+
+        myLabel.setText("Bluetooth Opened");
+    }
+
+    void beginListenForData()
+    {
+        final Handler handler = new Handler();
+        final byte delimiter = 10; //This is the ASCII code for a newline character
+
+        stopWorker = false;
+        readBufferPosition = 0;
+        readBuffer = new byte[1024];
+        workerThread = new Thread(new Runnable()
+        {
+            public void run()
+            {
+                while(!Thread.currentThread().isInterrupted() && !stopWorker)
+                {
+                    try
+                    {
+                        int bytesAvailable = mmInputStream.available();
+                        if(bytesAvailable > 0)
+                        {
+                            byte[] packetBytes = new byte[bytesAvailable];
+                            mmInputStream.read(packetBytes);
+                            for(int i=0;i<bytesAvailable;i++)
+                            {
+                                byte b = packetBytes[i];
+                                if(b == delimiter)
+                                {
+                                    byte[] encodedBytes = new byte[readBufferPosition];
+                                    System.arraycopy(readBuffer, 0, encodedBytes, 0, encodedBytes.length);
+                                    final String data = new String(encodedBytes, "US-ASCII");
+                                    System.out.println(data);
+                                    readBufferPosition = 0;
+
+                                    handler.post(new Runnable()
+                                    {
+                                        public void run()
+                                        {
+                                            myLabel.setText(data);
+                                        }
+                                    });
+                                }
+                                else
+                                {
+                                    readBuffer[readBufferPosition++] = b;
+                                }
+                            }
+                        }
+                    }
+                    catch (IOException ex)
+                    {
+                        stopWorker = true;
+                    }
+                }
+            }
+        });
+
+        workerThread.start();
     }
 
 }
