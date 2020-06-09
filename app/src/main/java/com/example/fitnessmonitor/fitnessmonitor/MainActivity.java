@@ -1,11 +1,15 @@
 package com.example.fitnessmonitor.fitnessmonitor;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
@@ -18,17 +22,91 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
-import com.example.fitnessmonitor.fitnessmonitor.GetReadings;
+import android.widget.Toast;
+
+
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.UUID;
 
 import static android.widget.FrameLayout.*;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    Button btnSearch;
+    Button btnOnOff;
+
+    BluetoothAdapter mBluetoothAdapter;
+//    FrameLayout flList;
+//    ListView lstDevices;
+//    TextView txtConnected;
+//    private ArrayList<String> deviceNames = new ArrayList<>();
+//    private ArrayList<String> deviceAddresses = new ArrayList<>();
+//    private ArrayList<String> devicesDisplay = new ArrayList<>();
+//    public ArrayList<BluetoothDevice> mBTDevices = new ArrayList<>();
+//    private ArrayAdapter devicesArrayAdapter;
+//    private int deviceTapped = 0;
+    Set<BluetoothDevice> pairedDevices; //set returned from checking paired devices
+//    private ArrayList<String> alreadyPaired = new ArrayList<String>();
+    BluetoothDevice pairedDevice;
+//    private String connectedName;
+//    private String connectedAddress;
+//    private String connectedThreadName;
+
+
+    BluetoothConnectionService mBluetoothConnection;
+    private static final UUID MY_UUID_INSECURE =
+            UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        //check if HC-05 or HC-06 is paired
+        pairedDevice = null;
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        pairedDevices = mBluetoothAdapter.getBondedDevices();
+
+        if(pairedDevices.size() != 0) {
+            for (BluetoothDevice bt : pairedDevices) {
+                if (bt.getName() != null) {
+                    if(bt.getName().contains("HC-05") || bt.getName().contains("HC-06")){
+                        pairedDevice = bt;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if(pairedDevice == null){
+            AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+            alertDialog.setTitle("Not Connected");
+            alertDialog.setMessage("Please connect to fitness monitor");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            Intent connecDeviceIntent = new Intent(getApplicationContext(), ConnectDevice.class);
+                            startActivity(connecDeviceIntent);
+                        }
+                    });
+            alertDialog.show();
+//            Toast.makeText(getApplicationContext(), "Please pair to fitness monitor device", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,8 +168,7 @@ public class MainActivity extends AppCompatActivity
         flSleepLayoutParams.height = activeCellHeight;//(int)(grdMainHeight * 0.9);
         flSleep.setLayoutParams(flSleepLayoutParams);
 
-//        GetReadings gr = new GetReadings();
-//        gr.readHC05();
+
 
     }
 
