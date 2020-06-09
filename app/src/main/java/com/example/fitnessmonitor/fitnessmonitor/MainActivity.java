@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity
         flSleepLayoutParams.height = activeCellHeight;//(int)(grdMainHeight * 0.9);
         flSleep.setLayoutParams(flSleepLayoutParams);
 
-        GetReadings gr = new GetReadings();
+//        GetReadings gr = new GetReadings();
 //        gr.readHC05();
 
     }
@@ -153,40 +153,30 @@ public class MainActivity extends AppCompatActivity
         FrameLayout fl = (FrameLayout)findViewById(R.id.frmStatus);
         Intent statusIntent = new Intent(getApplicationContext(), StatActivity.class);
         startActivity(statusIntent);
-//        GridLayout gridLayout = (GridLayout) findViewById(R.id.gridLayoutMain);
-//      System.out.println("Height is: "+ (int)gridLayout.getHeight());
     }
 
     public void goToWalking(View view){
         ImageView img = (ImageView) findViewById(R.id.imgWalk);
         Intent walkingIntent = new Intent(getApplicationContext(), ExerciseWalking.class);
         startActivity(walkingIntent);
-//        GridLayout gridLayout = (GridLayout) findViewById(R.id.gridLayoutMain);
-//      System.out.println("Height is: "+ (int)gridLayout.getHeight());
     }
 
     public void goToRunning(View view){
         ImageView img = (ImageView) findViewById(R.id.imgRun);
         Intent runningIntent = new Intent(getApplicationContext(), ExerciseRunning.class);
         startActivity(runningIntent);
-//        GridLayout gridLayout = (GridLayout) findViewById(R.id.gridLayoutMain);
-//      System.out.println("Height is: "+ (int)gridLayout.getHeight());
     }
 
     public void goToRecentWorkOuts(View view){
         TextView txtview = (TextView) findViewById(R.id.lblRecent);
         Intent RecentWorkOutsIntent = new Intent(getApplicationContext(), RecentWorkOuts.class);
         startActivity(RecentWorkOutsIntent);
-//        GridLayout gridLayout = (GridLayout) findViewById(R.id.gridLayoutMain);
-//      System.out.println("Height is: "+ (int)gridLayout.getHeight());
     }
 
     public void goToSleep(View view){
         FrameLayout flSleep = (FrameLayout) findViewById(R.id.frmSleep);
         Intent SleepIntent = new Intent(getApplicationContext(), SleepActivity.class);
         startActivity(SleepIntent);
-//        GridLayout gridLayout = (GridLayout) findViewById(R.id.gridLayoutMain);
-//      System.out.println("Height is: "+ (int)gridLayout.getHeight());
     }
 
 }
