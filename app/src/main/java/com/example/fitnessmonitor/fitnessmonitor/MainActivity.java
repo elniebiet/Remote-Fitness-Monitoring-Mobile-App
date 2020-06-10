@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity
 
     BluetoothConnectionService mBluetoothConnection;
     private static final UUID MY_UUID_INSECURE =
-            UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
+            UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     @Override
     public void onStart() {
@@ -168,7 +168,29 @@ public class MainActivity extends AppCompatActivity
         flSleepLayoutParams.height = activeCellHeight;//(int)(grdMainHeight * 0.9);
         flSleep.setLayoutParams(flSleepLayoutParams);
 
+        //check if HC-05 or HC-06 is paired
+        pairedDevice = null;
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        pairedDevices = mBluetoothAdapter.getBondedDevices();
 
+        if(pairedDevices.size() != 0) {
+            for (BluetoothDevice bt : pairedDevices) {
+                if (bt.getName() != null) {
+                    if(bt.getName().contains("HC-05") || bt.getName().contains("HC-06")){
+                        pairedDevice = bt;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if(pairedDevice != null) {
+            mBluetoothConnection = new BluetoothConnectionService(MainActivity.this);
+            //start connection
+            System.out.println("DEVICE CONNECTED, STARTING CONNECTION");
+            System.out.println("PAIRED DEVICE IS "+pairedDevice.getName());
+            startConnection();
+        }
 
     }
 
@@ -254,6 +276,24 @@ public class MainActivity extends AppCompatActivity
         FrameLayout flSleep = (FrameLayout) findViewById(R.id.frmSleep);
         Intent SleepIntent = new Intent(getApplicationContext(), SleepActivity.class);
         startActivity(SleepIntent);
+    }
+
+    /*
+     * create method for starting connection
+     * conncction will fail and app will crash if you haven't paired first
+     */
+    public void startConnection(){
+        startBTConnection(pairedDevice,MY_UUID_INSECURE);
+    }
+
+    /*
+     * starting chat service method
+     */
+    public void startBTConnection(BluetoothDevice device, UUID uuid){
+        Log.d("", "startBTConnection: Initializing RFCOM Bluetooth Connection.");
+        System.out.println("startBTConnection: Initializing RFCOM Bluetooth Connection");
+        System.out.println("mBluetoothConnection is "+ mBluetoothConnection);
+        mBluetoothConnection.startClient(device,uuid);
     }
 
 }

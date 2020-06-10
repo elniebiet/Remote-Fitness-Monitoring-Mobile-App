@@ -4,19 +4,29 @@ package com.example.fitnessmonitor.fitnessmonitor;
  * Created by Aniebiet Akpan on 09/06/20.
  */
 
+import android.app.Application;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.UUID;
+
+import static android.support.v4.content.ContextCompat.startActivity;
 
 public class BluetoothConnectionService {
     private static final String TAG = "BluetoothConnectionServ";
@@ -157,6 +167,12 @@ public class BluetoothConnectionService {
                     Log.e(TAG, "mConnectThread: run: Unable to close connection in socket " + e1.getMessage());
                 }
                 Log.d(TAG, "run: ConnectThread: Could not connect to UUID: " + MY_UUID_INSECURE );
+//                Toast.makeText(mContext, "Please Turn on fitness monitor device", Toast.LENGTH_LONG).show();
+                mProgressDialog.setMessage("Couldn't find device. Closing App ...");
+                // Do something after 5s = 5000ms
+                int pid = android.os.Process.myPid();
+                android.os.Process.killProcess(pid);
+
             }
 
             //will talk about this in the 3rd video
@@ -202,7 +218,7 @@ public class BluetoothConnectionService {
 
         //initprogress dialog
         mProgressDialog = ProgressDialog.show(mContext,"Connecting Bluetooth"
-                ,"Please Wait...",true);
+                ,"Fitness device must turned on....",true);
 
         mConnectThread = new ConnectThread(device, uuid);
         mConnectThread.start();
@@ -256,7 +272,12 @@ public class BluetoothConnectionService {
                     String incomingMessage = new String(buffer, 0, bytes);
                     Log.d(TAG, "InputStream: " + incomingMessage);
                 } catch (IOException e) {
+//                    Intent connecDeviceIntent = new Intent(mContext, ConnectDevice.class);
+//                    mContext.startActivity(connecDeviceIntent);
+//                    Toast.makeText(mContext, "Please connect to fitness monitor device", Toast.LENGTH_LONG).show();
                     Log.e(TAG, "write: Error reading Input Stream. " + e.getMessage() );
+                    int pid = android.os.Process.myPid();
+                    android.os.Process.killProcess(pid);
                     break;
                 }
             }
@@ -304,5 +325,4 @@ public class BluetoothConnectionService {
         //perform the write
         mConnectedThread.write(out);
     }
-
 }
