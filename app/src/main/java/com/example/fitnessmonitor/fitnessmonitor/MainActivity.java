@@ -2,13 +2,17 @@ package com.example.fitnessmonitor.fitnessmonitor;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Display;
@@ -46,21 +50,11 @@ public class MainActivity extends AppCompatActivity
     Button btnOnOff;
 
     BluetoothAdapter mBluetoothAdapter;
-//    FrameLayout flList;
-//    ListView lstDevices;
-//    TextView txtConnected;
-//    private ArrayList<String> deviceNames = new ArrayList<>();
-//    private ArrayList<String> deviceAddresses = new ArrayList<>();
-//    private ArrayList<String> devicesDisplay = new ArrayList<>();
-//    public ArrayList<BluetoothDevice> mBTDevices = new ArrayList<>();
-//    private ArrayAdapter devicesArrayAdapter;
-//    private int deviceTapped = 0;
     Set<BluetoothDevice> pairedDevices; //set returned from checking paired devices
-//    private ArrayList<String> alreadyPaired = new ArrayList<String>();
     BluetoothDevice pairedDevice;
-//    private String connectedName;
-//    private String connectedAddress;
-//    private String connectedThreadName;
+    String readings;
+
+    private int activityCreated = 0;
 
 
     BluetoothConnectionService mBluetoothConnection;
@@ -99,18 +93,37 @@ public class MainActivity extends AppCompatActivity
                         }
                     });
             alertDialog.show();
-//            Toast.makeText(getApplicationContext(), "Please pair to fitness monitor device", Toast.LENGTH_LONG).show();
         }
     }
-
+    @Override
+    public void onResume(){
+        super.onResume();
+        //if paired, start connection
+        if(pairedDevice != null && activityCreated == 0) {
+            mBluetoothConnection = new BluetoothConnectionService(MainActivity.this);
+            //start connection
+            System.out.println("DEVICE CONNECTED, STARTING CONNECTION");
+            System.out.println("PAIRED DEVICE IS " + pairedDevice.getName());
+            startConnection();
+            readings = "";
+            LocalBroadcastManager.getInstance(this).registerReceiver(rReceiver, new IntentFilter("incomingReadings"));
+        }
+        activityCreated = 0;
+    }
     @Override
     public void onStop() {
         super.onStop();
     }
 
     @Override
+    public void onBackPressed() {
+        this.moveTaskToBack(true);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        activityCreated = 1;
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -184,12 +197,15 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
+        //if paired, start connection
         if(pairedDevice != null) {
             mBluetoothConnection = new BluetoothConnectionService(MainActivity.this);
             //start connection
             System.out.println("DEVICE CONNECTED, STARTING CONNECTION");
-            System.out.println("PAIRED DEVICE IS "+pairedDevice.getName());
+            System.out.println("PAIRED DEVICE IS " + pairedDevice.getName());
             startConnection();
+            readings = "";
+            LocalBroadcastManager.getInstance(this).registerReceiver(rReceiver, new IntentFilter("incomingReadings"));
         }
 
     }
@@ -204,12 +220,6 @@ public class MainActivity extends AppCompatActivity
 //        }
 //    }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        return true;
-//    }
 
 //    @Override
 //    public boolean onOptionsItemSelected(MenuItem item) {
@@ -296,4 +306,11 @@ public class MainActivity extends AppCompatActivity
         mBluetoothConnection.startClient(device,uuid);
     }
 
+    BroadcastReceiver rReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String readings = intent.getStringExtra("theReadings");
+            Log.i("FROM ACTIVITY", readings);
+        }
+    };
 }

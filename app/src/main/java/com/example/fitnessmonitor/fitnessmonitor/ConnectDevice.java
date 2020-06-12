@@ -180,7 +180,7 @@ public class ConnectDevice extends AppCompatActivity {
                     if(alreadyPaired.contains(mDevice.getAddress())){
                         pairDevice(deviceAddresses.indexOf(mDevice.getAddress()));
                     } else {
-                        Toast.makeText(getApplicationContext(), "Pairing Failed, Please check that the fitness device turned on.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Pairing Failed, Please check that the fitness device turned on and try again.", Toast.LENGTH_LONG).show();
                     }
                     Log.d("", "BroadcastReceiver: BOND_NONE.");
 
@@ -260,10 +260,11 @@ public class ConnectDevice extends AppCompatActivity {
         //check connected devices
         checkConnected();
 
-        //create array adapter
-        devicesArrayAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, devicesDisplay);
         //get default adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        //create array adapter
+        devicesArrayAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, devicesDisplay);
         //get already paired devices
         pairedDevices = mBluetoothAdapter.getBondedDevices();
         for(BluetoothDevice bt : pairedDevices)
@@ -424,10 +425,23 @@ public class ConnectDevice extends AppCompatActivity {
         }
     }
 
-
+    /*
+    **check for connected devices, i.e if bluetooth is on and device is paired
+    * else search for devices. NB: normally app wouldnt get here if not connected to device
+    * */
     public void checkConnected()
     {
-
+        //check if bluetooth is on, then list devices
+//        if(!(mBluetoothAdapter == null)){ //first check if device has BT
+//            if(!(mBluetoothAdapter.isEnabled())){
+//                txtConnected.setVisibility(View.INVISIBLE);
+//                lstDevices.setVisibility(View.VISIBLE);
+//                flList.setBackgroundResource(R.color.colorAsh);
+//                btnSearch.setClickable(true);
+//            }else {
+//                Toast.makeText(getApplicationContext(), "Please Turn on Bluetooth", Toast.LENGTH_SHORT).show();
+//            }
+//        }
         BluetoothAdapter.getDefaultAdapter().getProfileProxy(this, serviceListener, BluetoothProfile.HEADSET);
     }
 

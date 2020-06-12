@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.Toast;
@@ -261,8 +262,9 @@ public class BluetoothConnectionService {
 
         public void run(){
             byte[] buffer = new byte[1024];  // buffer store for the stream
-
+            int readingComplete = 0;
             int bytes; // bytes returned from read()
+            String msg = "";
 
             // Keep listening to the InputStream until an exception occurs
             while (true) {
@@ -270,11 +272,27 @@ public class BluetoothConnectionService {
                 try {
                     bytes = mmInStream.read(buffer);
                     String incomingMessage = new String(buffer, 0, bytes);
-                    Log.d(TAG, "InputStream: " + incomingMessage);
+                    if(!(incomingMessage.contains("\n"))){
+                        msg += incomingMessage;
+                        readingComplete = 0;
+                    } else {
+                        msg += incomingMessage;
+                        readingComplete = 1;
+                    }
+
+                    Log.d(TAG, "InputStream: " + incomingMessage + "LENGTH: "+ incomingMessage.length());
+
+                    //create intent to send broadcast to MainActivity
+                    Intent incomingReadingsIntent = new Intent("incomingReadings");
+                    msg = msg.replace("\n", "");
+                    incomingReadingsIntent.putExtra("theReadings", msg);
+                    if(readingComplete == 1) {
+                        Log.i("SENT MESSAGE: ", msg);
+                        LocalBroadcastManager.getInstance(mContext).sendBroadcast(incomingReadingsIntent);
+                        msg = "";
+                        readingComplete = 0;
+                    }
                 } catch (IOException e) {
-//                    Intent connecDeviceIntent = new Intent(mContext, ConnectDevice.class);
-//                    mContext.startActivity(connecDeviceIntent);
-//                    Toast.makeText(mContext, "Please connect to fitness monitor device", Toast.LENGTH_LONG).show();
                     Log.e(TAG, "write: Error reading Input Stream. " + e.getMessage() );
                     int pid = android.os.Process.myPid();
                     android.os.Process.killProcess(pid);
@@ -284,15 +302,15 @@ public class BluetoothConnectionService {
         }
 
         //Call this from the main activity to send data to the remote device
-        public void write(byte[] bytes) {
-            String text = new String(bytes, Charset.defaultCharset());
-            Log.d(TAG, "write: Writing to outputstream: " + text);
-            try {
-                mmOutStream.write(bytes);
-            } catch (IOException e) {
-                Log.e(TAG, "write: Error writing to output stream. " + e.getMessage() );
-            }
-        }
+//        public void write(byte[] bytes) {
+//            String text = new String(bytes, Charset.defaultCharset());
+//            Log.d(TAG, "write: Writing to outputstream: " + text);
+//            try {
+//                mmOutStream.write(bytes);
+//            } catch (IOException e) {
+//                Log.e(TAG, "write: Error writing to output stream. " + e.getMessage() );
+//            }
+//        }
 
         /* Call this from the main activity to shutdown the connection */
         public void cancel() {
@@ -310,19 +328,19 @@ public class BluetoothConnectionService {
         mConnectedThread.start();
     }
 
-    /**
-     * Write to the ConnectedThread in an unsynchronized manner
-     *
-     * @param out The bytes to write
-     * @see ConnectedThread#write(byte[])
-     */
-    public void write(byte[] out) {
-        // Create temporary object
-        ConnectedThread r;
-
-        // Synchronize a copy of the ConnectedThread
-        Log.d(TAG, "write: Write Called.");
-        //perform the write
-        mConnectedThread.write(out);
-    }
+//    /**
+//     * Write to the ConnectedThread in an unsynchronized manner
+//     *
+//     * @param out The bytes to write
+//     * @see ConnectedThread#write(byte[])
+//     */
+//    public void write(byte[] out) {
+//        // Create temporary object
+//        ConnectedThread r;
+//
+//        // Synchronize a copy of the ConnectedThread
+//        Log.d(TAG, "write: Write Called.");
+//        //perform the write
+//        mConnectedThread.write(out);
+//    }
 }
