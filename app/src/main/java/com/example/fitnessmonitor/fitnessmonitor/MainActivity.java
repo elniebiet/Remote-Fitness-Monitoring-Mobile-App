@@ -1,5 +1,7 @@
 package com.example.fitnessmonitor.fitnessmonitor;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -7,6 +9,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -15,6 +19,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.Display;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -40,6 +45,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import static android.widget.FrameLayout.*;
 
@@ -54,8 +60,17 @@ public class MainActivity extends AppCompatActivity
     BluetoothDevice pairedDevice;
     String readings;
     public static int backFromActivity = 0;
+    private SQLiteDatabase sqLiteDatabase = null;
     private int activityCreated = 0;
-
+    private String userEmail = "";
+    private String userFirstName = "";
+    private String userLastName = "";
+    private String userGender = "";
+    private String userDOB = "";
+    private String userHeight = "";
+    private String userWeight = "";
+    private String deviceID = "";
+    private Boolean dbcreated = false;
 
     BluetoothConnectionService mBluetoothConnection;
     private static final UUID MY_UUID_INSECURE =
@@ -98,7 +113,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onResume(){
         super.onResume();
-        //on restart connection if a new connection is made, by checking if just coming from activity
+        //on restart connection if a new connection is made, by checking if just coming from another activity
         if(pairedDevice != null && backFromActivity == 1) {
             mBluetoothConnection = new BluetoothConnectionService(MainActivity.this);
             //start connection
@@ -127,6 +142,89 @@ public class MainActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        /*create database*/
+        try {
+            sqLiteDatabase = this.openOrCreateDatabase("FitnessMonitorDB", MODE_PRIVATE, null);
+            sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS tblUserProfile (id INT(1) PRIMARY KEY NOT NULL, email VARCHAR, firstName VARCHAR, lastName VARCHAR, gender VARCHAR, DOB VARCHAR, height INT(3), weight INT(3))");
+            sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS tblReadings (bodyTemp VARCHAR, heartRate VARCHAR, numOfSteps BIGINT(10), timeRecorded TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)");
+            sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS tblDeviceID (deviceID VARCHAR)");
+//            this.deleteDatabase("FitnessMonitorDB"); //to drob db
+            Log.i("SUCCESS CREATING DB: ", "database created");
+            dbcreated = true;
+        } catch (Exception ex){
+            Log.i("ERROR CREATING DB: ", "couldn't create database"+ex.getMessage());
+        }
+
+        //check if device ID is assigned to device else create one
+        if(dbcreated){
+            Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM tblDeviceID", null);
+            int idIndex = cursor.getColumnIndex("deviceID");
+
+            boolean cursorResponse = cursor.moveToFirst();
+
+            if(cursorResponse){
+                //get the device id
+                deviceID = cursor.getString(idIndex);
+                Log.i("DEVICE ID IS: ", deviceID);
+
+            } else {
+                //user profile details not specified
+                //generate device ID
+                //get current timestamp
+                Long tsLong = System.currentTimeMillis()/1000;
+                String userID = "USER"+tsLong.toString();
+                try {
+                    sqLiteDatabase.execSQL("INSERT INTO tblDeviceID (deviceID) VALUES ('"+userID+"')");
+                    Log.i("SUCCESS INSERTING ID", "inserted generated user ID");
+
+                } catch(Exception e){
+                    Log.i("ERROR INSERTING ID", "Couldnt insert generated user ID");
+                }
+            }
+        }
+        //Check if user email is assigned else get it if available, by checking for profile details
+//        if(dbcreated){
+//            Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM tblUserProfile", null);
+//            int emlIndex = cursor.getColumnIndex("email");
+//            int firstNameIndex = cursor.getColumnIndex("firstName");
+//            int lastNameIndex = cursor.getColumnIndex("lastName");
+//            int genderIndex = cursor.getColumnIndex("gender");
+//            int DOBIndex = cursor.getColumnIndex("DOB");
+//            int heightIndex = cursor.getColumnIndex("height");
+//            int weightIndex = cursor.getColumnIndex("weight");
+//
+//            cursor.moveToFirst();
+//
+//            if(cursor != null){
+//                //user profile details specified
+//
+//            } else {
+//                //user profile details not specified
+//                //get email
+//                try {
+//                    Pattern emailPattern = Patterns.EMAIL_ADDRESS; // API level 8+
+//                    Account[] accounts = AccountManager.get(this).getAccounts();
+//                    for (Account account : accounts) {
+//                        if (emailPattern.matcher(account.name).matches()) {
+//                            userEmail = account.name;
+//                            Log.i("POSSIBLE EMAIL ADDR: ", userEmail);
+//                            break;
+//                        }
+//                    }
+//                    if (accounts.length == 0) {
+//                        Log.i("ERROR GETTING EMAIL ", "Couldnt get email address");
+//
+//                    }
+//                } catch (Exception ex){
+//                    Log.i("ERROR GETTING EMAIL: ", "couldn't get email address "+ex.getMessage());
+//                }
+//            }
+//        }
+
+
+
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -310,7 +408,39 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void onReceive(Context context, Intent intent) {
             String readings = intent.getStringExtra("theReadings");
-            Log.i("FROM ACTIVITY", readings);
+            System.out.println("FROM ACTIVITY: READINGS: "+ readings);
+            //get readings from activity, confirm it is the right reading
+            if(readings.contains("|")) {
+                String[] splitted = splitString(readings);
+                String temp = splitted[0];
+                String BPM = splitted[1];
+                String hRate = splitted[2];
+                //write to database
+                try {
+                    String query = "INSERT INTO tblReadings (bodyTemp, heartRate, numOfSteps, timeRecorded) VALUES ('" + temp + "', '" + BPM + "', '" + hRate + "', '')";
+                    System.out.println("INSERT QUERY: " + query);
+                    sqLiteDatabase.execSQL(query);
+                    Log.i("SUCCESSFUL INSERT: ","readings inserted to db" );
+                } catch(Exception ex){
+                    Log.i("FAILED INSERT: ","failed to insert readings to db" );
+                }
+            }
+
         }
     };
+
+    private String[] splitString(String str){
+        int firstPipe = str.indexOf("|"); //check for index of first pipe
+        StringBuilder tmp = new StringBuilder(str);
+        tmp.setCharAt(firstPipe, ':'); //replace first pipe with : to get index of second pipe
+        str = tmp.toString();
+        int secondPipe = str.indexOf("|");
+        str = str.replace(':', '|'); //replace back the :
+        String[] parts = {"","",""};
+        parts[0] = str.substring(0,firstPipe);
+        parts[1] = str.substring(firstPipe+1, secondPipe);
+        parts[2] = str.substring(secondPipe+1, str.length());
+
+        return parts;
+    }
 }
