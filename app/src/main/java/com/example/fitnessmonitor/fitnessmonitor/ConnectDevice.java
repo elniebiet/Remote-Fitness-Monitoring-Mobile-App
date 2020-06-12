@@ -157,7 +157,7 @@ public class ConnectDevice extends AppCompatActivity {
                 if (mDevice.getBondState() == BluetoothDevice.BOND_BONDED){
                     Log.d("", "BroadcastReceiver: BOND_BONDED.");
                     Toast.makeText(getApplicationContext(), "Pairing Complete", Toast.LENGTH_LONG).show();
-
+                    MainActivity.backFromActivity = 1;
                     String connectedTo = (mDevice.getName() != null) ? mDevice.getName(): ("ID - "+ mDevice.getAddress());
                     txtConnected.setText("Connected to Device: " + connectedTo);
                     lstDevices.setVisibility(View.INVISIBLE);
@@ -257,18 +257,20 @@ public class ConnectDevice extends AppCompatActivity {
 
         txtConnected.setVisibility(View.INVISIBLE);
 
-        //check connected devices
-        checkConnected();
-
         //get default adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
+        //check connected devices
+        checkConnected();
+
         //create array adapter
         devicesArrayAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, devicesDisplay);
+
         //get already paired devices
         pairedDevices = mBluetoothAdapter.getBondedDevices();
         for(BluetoothDevice bt : pairedDevices)
             alreadyPaired.add(bt.getAddress());
+
 
         //Broadcasts when bond state changes (ie:pairing)
         try {
@@ -431,15 +433,21 @@ public class ConnectDevice extends AppCompatActivity {
     * */
     public void checkConnected()
     {
-        //check if bluetooth is on, then list devices
+        //check if bluetooth is on and device is paired
 //        if(!(mBluetoothAdapter == null)){ //first check if device has BT
-//            if(!(mBluetoothAdapter.isEnabled())){
-//                txtConnected.setVisibility(View.INVISIBLE);
-//                lstDevices.setVisibility(View.VISIBLE);
-//                flList.setBackgroundResource(R.color.colorAsh);
-//                btnSearch.setClickable(true);
-//            }else {
-//                Toast.makeText(getApplicationContext(), "Please Turn on Bluetooth", Toast.LENGTH_SHORT).show();
+//            if(mBluetoothAdapter.isEnabled()){
+//                for(BluetoothDevice bt: pairedDevices){
+//                    if(bt.getName() != null) {
+//                        if (bt.getName().contains("HC-05") || bt.getName().contains("HC-06")) {
+//                            String connectedTo = (bt.getName() != null) ? bt.getName() : ("ID - "+ bt.getAddress());
+//                            txtConnected.setText("Connected to Device: " + connectedTo);
+//                            lstDevices.setVisibility(View.INVISIBLE);
+//                            flList.setBackgroundResource(R.color.colorWhite);
+//                            txtConnected.setVisibility(View.VISIBLE);
+//                            break;
+//                        }
+//                    }
+//                }
 //            }
 //        }
         BluetoothAdapter.getDefaultAdapter().getProfileProxy(this, serviceListener, BluetoothProfile.HEADSET);

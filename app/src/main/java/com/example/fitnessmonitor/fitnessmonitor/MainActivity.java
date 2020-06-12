@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity
     Set<BluetoothDevice> pairedDevices; //set returned from checking paired devices
     BluetoothDevice pairedDevice;
     String readings;
-
+    public static int backFromActivity = 0;
     private int activityCreated = 0;
 
 
@@ -98,8 +98,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onResume(){
         super.onResume();
-        //if paired, start connection
-        if(pairedDevice != null && activityCreated == 0) {
+        //on restart connection if a new connection is made, by checking if just coming from activity
+        if(pairedDevice != null && backFromActivity == 1) {
             mBluetoothConnection = new BluetoothConnectionService(MainActivity.this);
             //start connection
             System.out.println("DEVICE CONNECTED, STARTING CONNECTION");
@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity
             readings = "";
             LocalBroadcastManager.getInstance(this).registerReceiver(rReceiver, new IntentFilter("incomingReadings"));
         }
-        activityCreated = 0;
+        backFromActivity = 0;
     }
     @Override
     public void onStop() {
