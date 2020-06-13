@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity
         /*create database*/
         try {
             sqLiteDatabase = this.openOrCreateDatabase("FitnessMonitorDB", MODE_PRIVATE, null);
-            sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS tblUserProfile (id INT(1) PRIMARY KEY NOT NULL, email VARCHAR, firstName VARCHAR, lastName VARCHAR, gender VARCHAR, DOB VARCHAR, height INT(3), weight INT(3))");
+            sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS tblUserProfile (id INT(1) PRIMARY KEY NOT NULL, email VARCHAR, firstName VARCHAR, lastName VARCHAR, gender VARCHAR, DOB VARCHAR, height INT(3), weight INT(3), picLocation VARCHAR, picType VARCHAR)");
             sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS tblReadings (bodyTemp VARCHAR, heartRate VARCHAR, numOfSteps BIGINT(10), timeRecorded TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)");
             sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS tblDeviceID (deviceID VARCHAR)");
 //            this.deleteDatabase("FitnessMonitorDB"); //to drob db
@@ -154,6 +154,7 @@ public class MainActivity extends AppCompatActivity
             dbcreated = true;
         } catch (Exception ex){
             Log.i("ERROR CREATING DB: ", "couldn't create database"+ex.getMessage());
+            dbcreated = false;
         }
 
         //check if device ID is assigned to device else create one
@@ -169,7 +170,7 @@ public class MainActivity extends AppCompatActivity
                 Log.i("DEVICE ID IS: ", deviceID);
 
             } else {
-                //user profile details not specified
+                //user device id not created
                 //generate device ID
                 //get current timestamp
                 Long tsLong = System.currentTimeMillis()/1000;
@@ -183,46 +184,6 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }
-        //Check if user email is assigned else get it if available, by checking for profile details
-//        if(dbcreated){
-//            Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM tblUserProfile", null);
-//            int emlIndex = cursor.getColumnIndex("email");
-//            int firstNameIndex = cursor.getColumnIndex("firstName");
-//            int lastNameIndex = cursor.getColumnIndex("lastName");
-//            int genderIndex = cursor.getColumnIndex("gender");
-//            int DOBIndex = cursor.getColumnIndex("DOB");
-//            int heightIndex = cursor.getColumnIndex("height");
-//            int weightIndex = cursor.getColumnIndex("weight");
-//
-//            cursor.moveToFirst();
-//
-//            if(cursor != null){
-//                //user profile details specified
-//
-//            } else {
-//                //user profile details not specified
-//                //get email
-//                try {
-//                    Pattern emailPattern = Patterns.EMAIL_ADDRESS; // API level 8+
-//                    Account[] accounts = AccountManager.get(this).getAccounts();
-//                    for (Account account : accounts) {
-//                        if (emailPattern.matcher(account.name).matches()) {
-//                            userEmail = account.name;
-//                            Log.i("POSSIBLE EMAIL ADDR: ", userEmail);
-//                            break;
-//                        }
-//                    }
-//                    if (accounts.length == 0) {
-//                        Log.i("ERROR GETTING EMAIL ", "Couldnt get email address");
-//
-//                    }
-//                } catch (Exception ex){
-//                    Log.i("ERROR GETTING EMAIL: ", "couldn't get email address "+ex.getMessage());
-//                }
-//            }
-//        }
-
-
 
 
 
@@ -419,7 +380,7 @@ public class MainActivity extends AppCompatActivity
                 //write to database
                 try {
                     String query = "INSERT INTO tblReadings (bodyTemp, heartRate, numOfSteps, timeRecorded) VALUES ('" + temp + "', '" + BPM + "', '" + hRate + "', '')";
-                    System.out.println("INSERT QUERY: " + query);
+//                    System.out.println("INSERT QUERY: " + query);
                     sqLiteDatabase.execSQL(query);
                     Log.i("SUCCESSFUL INSERT: ","readings inserted to db" );
                 } catch(Exception ex){

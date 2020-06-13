@@ -15,11 +15,79 @@
         android:layout_marginTop="8dp"
         android:background="@color/colorAsh"
         android:columnCount="1"
-        android:rowCount="9"
+        android:rowCount="11"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
+        <FrameLayout
+            android:id="@+id/flLastName"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_column="0"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_row="5"
+            android:background="@drawable/border_radius_status">
+
+            <EditText
+                android:id="@+id/edtLastName"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="90dp"
+                android:layout_marginTop="10dp"
+                android:background="@null"
+                android:editable="true"
+                android:ems="10"
+                android:hint="your last name"
+                android:inputType="text"
+                android:maxLength="25"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/lblLastName"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:text="Last name:" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/flFirstName"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_column="0"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_row="4"
+            android:background="@drawable/border_radius_status">
+
+            <EditText
+                android:id="@+id/edtFirstName"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="90dp"
+                android:layout_marginTop="10dp"
+                android:background="@null"
+                android:editable="true"
+                android:ems="10"
+                android:hint="your first name"
+                android:inputType="text"
+                android:maxLength="25"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/lblFirstName"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:text="First name:" />
+        </FrameLayout>
 
         <FrameLayout
             android:id="@+id/flBack"
@@ -112,7 +180,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_marginTop="5dp"
-            android:layout_row="4"
+            android:layout_row="6"
             android:background="@drawable/border_radius_status">
 
             <TextView
@@ -121,6 +189,7 @@
                 android:layout_height="30dp"
                 android:layout_marginLeft="105dp"
                 android:layout_marginTop="10dp"
+                android:editable="false"
                 android:hint="set DOB"
                 android:onClick="dobClicked" />
 
@@ -142,7 +211,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_marginTop="5dp"
-            android:layout_row="5"
+            android:layout_row="7"
             android:background="@drawable/border_radius_status">
 
             <TextView
@@ -153,13 +222,19 @@
                 android:layout_marginTop="10dp"
                 android:text="Height:" />
 
-            <TextView
-                android:id="@+id/txtHeight"
+            <EditText
+                android:id="@+id/edtHeight"
                 android:layout_width="90dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="70dp"
                 android:layout_marginTop="10dp"
-                android:hint="height in cm" />
+                android:background="@null"
+                android:editable="true"
+                android:ems="10"
+                android:hint="height in cm"
+                android:inputType="number"
+                android:maxLength="3"
+                android:textSize="12sp" />
 
         </FrameLayout>
 
@@ -171,7 +246,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_marginTop="5dp"
-            android:layout_row="6"
+            android:layout_row="8"
             android:background="@drawable/border_radius_status">
 
             <TextView
@@ -182,13 +257,19 @@
                 android:layout_marginTop="10dp"
                 android:text="Weight:" />
 
-            <TextView
-                android:id="@+id/txtWeight"
+            <EditText
+                android:id="@+id/edtWeight"
                 android:layout_width="90dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="70dp"
                 android:layout_marginTop="10dp"
-                android:hint="weight in kg" />
+                android:background="@null"
+                android:editable="true"
+                android:ems="10"
+                android:hint="weight in kg"
+                android:inputType="number"
+                android:maxLength="3"
+                android:textSize="12sp" />
         </FrameLayout>
 
         <FrameLayout
@@ -199,15 +280,15 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="5dp"
-            android:layout_row="7">
+            android:layout_row="9">
 
             <Button
-                android:id="@+id/btnUpdate"
-                android:layout_width="80dp"
-                android:layout_height="30dp"
-                android:layout_marginLeft="10dp"
-                android:background="@android:color/holo_green_light"
+                android:id="@+id/btnUpdateProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="btnUpdateProfileClicked"
                 android:text="Update" />
+
         </FrameLayout>
 
         <FrameLayout
@@ -215,7 +296,7 @@
             android:layout_width="match_parent"
             android:layout_height="110dp"
             android:layout_column="0"
-            android:layout_row="8">
+            android:layout_row="10">
 
             <ImageView
                 android:id="@+id/imgPicture2"
