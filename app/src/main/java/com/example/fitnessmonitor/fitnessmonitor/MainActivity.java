@@ -341,7 +341,8 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_profile) {
-            // Handle the camera action
+            Intent userProfileIntent = new Intent(getApplicationContext(), UserProfile.class);
+            startActivity(userProfileIntent);
         } else if (id == R.id.nav_weekly_summary) {
 
         } else if (id == R.id.nav_connect_device) {

@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.fitnessmonitor.fitnessmonitor">
+
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.BLUETOOTH_PRIVILEGED" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -35,8 +37,12 @@
         <activity android:name=".ExerciseWalking" />
         <activity android:name=".ExerciseRunning" />
         <activity android:name=".RecentWorkOuts" />
-        <activity android:name=".SleepActivity" android:theme="@style/AppTheme.NoActionBar" android:parentActivityName=".MainActivity" />
-        <activity android:name=".ConnectDevice"></activity>
+        <activity
+            android:name=".SleepActivity"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".ConnectDevice" />
+        <activity android:name=".UserProfile"></activity>
     </application>
 
 </manifest>
