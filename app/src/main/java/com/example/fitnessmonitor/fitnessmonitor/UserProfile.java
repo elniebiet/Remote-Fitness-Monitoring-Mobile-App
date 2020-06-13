@@ -326,8 +326,8 @@ public class UserProfile extends AppCompatActivity {
     }
 
     private void showFileChooser() {
-
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        //ACTION_GET_CONTENT
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("*/*");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
 
@@ -358,11 +358,10 @@ public class UserProfile extends AppCompatActivity {
                         userPicLocation = uri.toString();
                         userPicType = filetype.toLowerCase();
                         Log.d("", "File Uri: " + uri.toString());
-                        Toast.makeText(this, "Profile Picture Updated.", Toast.LENGTH_LONG).show();
+//                        Toast.makeText(this, "Profile Picture Added.", Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(getApplicationContext(), "Invalid filetype, please select an image (jpg or png format) " + "|"+filetype.toLowerCase()+"|" , Toast.LENGTH_LONG).show();
                     }
-
                 }
                 break;
         }
