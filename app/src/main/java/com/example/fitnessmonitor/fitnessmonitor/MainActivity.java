@@ -21,6 +21,7 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -59,18 +60,16 @@ public class MainActivity extends AppCompatActivity
     Set<BluetoothDevice> pairedDevices; //set returned from checking paired devices
     BluetoothDevice pairedDevice;
     String readings;
+    TextView txtUserEmail;
     public static int backFromActivity = 0;
     private SQLiteDatabase sqLiteDatabase = null;
     private int activityCreated = 0;
     private String userEmail = "";
-    private String userFirstName = "";
-    private String userLastName = "";
-    private String userGender = "";
-    private String userDOB = "";
-    private String userHeight = "";
-    private String userWeight = "";
     private String deviceID = "";
     private Boolean dbcreated = false;
+    private TextView txtBodyTemp;
+    private TextView txtHeartRate;
+    private TextView txtStatus;
 
     BluetoothConnectionService mBluetoothConnection;
     private static final UUID MY_UUID_INSECURE =
@@ -185,7 +184,24 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
+        //check for user email if account added
+        try {
+            Pattern emailPattern = Patterns.EMAIL_ADDRESS; // API level 8+
+            Account[] accounts = AccountManager.get(this).getAccounts();
+            for (Account account : accounts) {
+                if (emailPattern.matcher(account.name).matches()) {
+                    userEmail = account.name;
+                    Log.i("POSSIBLE EMAIL ADDR: ", userEmail);
+                    break;
+                }
+            }
+            if (accounts.length == 0) {
+                Log.i("NO EMAIL ADDR: ", "Couldnt find email address");
 
+            }
+        } catch (Exception ex){
+            Log.i("ERROR GETTING EMAIL: ", "couldn't get email address "+ex.getMessage());
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -211,20 +227,20 @@ public class MainActivity extends AppCompatActivity
         ViewGroup.LayoutParams tbLayoutParams = tb.getLayoutParams();
         tbLayoutParams.height = toolbarHeight;//(int)(grdMainHeight * 0.9);
         tb.setLayoutParams(tbLayoutParams);
-        //set gridlayout height
-        int glHeight = (int)(0.95*height);
-        GridLayout gridLayout = (GridLayout) findViewById(R.id.gridLayoutMain);
-        ViewGroup.LayoutParams glParams = gridLayout.getLayoutParams();
-        glParams.height = glHeight;
-        gridLayout.setLayoutParams(glParams);
+        //set picture frame height
+        int frmPictureHeight = (int)(0.2*height);
+        FrameLayout frmPicture = (FrameLayout) findViewById(R.id.frmPicture);
+        ViewGroup.LayoutParams frmPictureLayoutParams = frmPicture.getLayoutParams();
+        frmPictureLayoutParams.height = frmPictureHeight;//(int)(grdMainHeight * 0.9);
+        frmPicture.setLayoutParams(frmPictureLayoutParams);
         //set status cell height
-        int statusCellHeight = (int)(0.4*glHeight);
+        int statusCellHeight = (int)(0.3*height);
         FrameLayout flStatus = (FrameLayout) findViewById(R.id.frmStatus);
         ViewGroup.LayoutParams flStatusLayoutParams = flStatus.getLayoutParams();
         flStatusLayoutParams.height = statusCellHeight;//(int)(grdMainHeight * 0.9);
         flStatus.setLayoutParams(flStatusLayoutParams);
         //set active cell height
-        int activeCellHeight = (int)(glHeight/4.5 - 0.035*glHeight);
+        int activeCellHeight = (int)(0.13 * height);
         FrameLayout flActive = (FrameLayout) findViewById(R.id.frmActive);
         ViewGroup.LayoutParams flActiveLayoutParams = flActive.getLayoutParams();
         flActiveLayoutParams.height = activeCellHeight;//(int)(grdMainHeight * 0.9);
@@ -240,6 +256,24 @@ public class MainActivity extends AppCompatActivity
         flSleepLayoutParams.height = activeCellHeight;//(int)(grdMainHeight * 0.9);
         flSleep.setLayoutParams(flSleepLayoutParams);
 
+        //other UI elements
+        txtBodyTemp = (TextView)findViewById(R.id.txtBodyTemp);
+        txtHeartRate = (TextView)findViewById(R.id.txtHeartRate);
+        txtStatus = (TextView)findViewById(R.id.txtStatus);
+
+        View header = navigationView.getHeaderView(0);
+        txtUserEmail = (TextView) header.findViewById(R.id.txtUserEmail);
+
+        //set email on drawer
+        if(userEmail.length() == 0){
+            txtUserEmail.setText("Add email account to device.");
+            txtUserEmail.setTextColor(Color.GREEN);
+            txtUserEmail.setTextSize(14);
+        } else {
+            txtUserEmail.setText(userEmail);
+            txtUserEmail.setTextColor(Color.DKGRAY);
+            txtUserEmail.setTextSize(14);
+        }
         //check if HC-05 or HC-06 is paired
         pairedDevice = null;
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -277,22 +311,6 @@ public class MainActivity extends AppCompatActivity
 //        } else {
 //            super.onBackPressed();
 //        }
-//    }
-
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
 //    }
 
 //    @SuppressWarnings("StatementWithEmptyBody")
@@ -375,8 +393,23 @@ public class MainActivity extends AppCompatActivity
             if(readings.contains("|")) {
                 String[] splitted = splitString(readings);
                 String temp = splitted[0];
-                String BPM = splitted[1];
-                String hRate = splitted[2];
+                String hRate = splitted[1];
+                String BPM = splitted[2];
+                //display on View
+                txtBodyTemp.setText(temp + " 'C");
+                txtHeartRate.setText(hRate + " BPM");
+
+                //set color
+                try {
+                    if (Integer.parseInt(temp) > 38)
+                        txtBodyTemp.setTextColor(Color.RED);
+                    else txtBodyTemp.setTextColor(Color.GREEN);
+                    if (Integer.parseInt(hRate) > 100 || Integer.parseInt(hRate) < 60)
+                        txtHeartRate.setTextColor(Color.RED);
+                    else txtHeartRate.setTextColor(Color.GREEN);
+                } catch (Exception ex){
+                    Log.i("COLOR SETTING: ", "error "+ex.getMessage());
+                }
                 //write to database
                 try {
                     String query = "INSERT INTO tblReadings (bodyTemp, heartRate, numOfSteps, timeRecorded) VALUES ('" + temp + "', '" + BPM + "', '" + hRate + "', '')";
