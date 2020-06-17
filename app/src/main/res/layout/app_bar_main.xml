@@ -67,7 +67,7 @@
                 android:layout_height="25dp"
                 android:layout_marginLeft="268dp"
                 android:layout_marginTop="7dp"
-                android:text="6000"
+                android:text="5000"
                 android:textColor="@color/colorBlack"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -88,7 +88,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="105dp"
                 android:layout_marginTop="20dp"
-                android:text="36 'C"
+                android:text="0 'C"
                 android:textColor="@color/colorDarkAsh"
                 android:textSize="16sp" />
 
@@ -107,7 +107,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="100dp"
                 android:layout_marginTop="45dp"
-                android:text="78 BPM"
+                android:text="0 BPM"
                 android:textColor="@color/colorDarkAsh"
                 android:textSize="16sp" />
 
@@ -153,7 +153,8 @@
                 android:text="More exercise needed to keep fit."
                 android:textAlignment="textStart"
                 android:textColor="@color/colorDarkAsh"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:textStyle="italic" />
 
         </FrameLayout>
 

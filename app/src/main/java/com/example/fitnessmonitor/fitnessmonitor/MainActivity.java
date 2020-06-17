@@ -81,7 +81,8 @@ public class MainActivity extends AppCompatActivity
     private String latestMinute = "";
     private String latestDay = "";
     private String todayDay = "";
-
+    private ImageView imgSteps;
+    private TextView txtSteps;
 
     BluetoothConnectionService mBluetoothConnection;
     private static final UUID MY_UUID_INSECURE =
@@ -271,6 +272,12 @@ public class MainActivity extends AppCompatActivity
         flSleepLayoutParams.height = activeCellHeight;//(int)(grdMainHeight * 0.9);
         flSleep.setLayoutParams(flSleepLayoutParams);
 
+        imgSteps = (ImageView) findViewById(R.id.imgSteps);
+        imgSteps.setRotation(0);
+
+        txtSteps = (TextView) findViewById(R.id.txtSteps);
+        txtSteps.setText("0 steps");
+
         //other UI elements
         txtBodyTemp = (TextView)findViewById(R.id.txtBodyTemp);
         txtHeartRate = (TextView)findViewById(R.id.txtHeartRate);
@@ -321,6 +328,8 @@ public class MainActivity extends AppCompatActivity
             getLatestReadings();
             //check if its a new day, reset the number of steps
             checkNewDaySetNumSteps();
+            txtSteps.setText(Integer.toString(latestNumSteps) + " steps");
+            imgSteps.setRotation(latestNumSteps/5000f * 360f);
         }
 
 
@@ -422,7 +431,7 @@ public class MainActivity extends AppCompatActivity
         String updateString = Integer.toString(latestNumSteps);
 
         mBluetoothConnection.startClient(device, uuid, updateString);
-        
+
     }
 
     BroadcastReceiver rReceiver = new BroadcastReceiver() {
@@ -449,13 +458,15 @@ public class MainActivity extends AppCompatActivity
                 String hRate = splitted[1];
                 String numSteps = splitted[2];
                 String currentTS = getCurrentTimeStamp();
-                //display on View
+                //update View
                 txtBodyTemp.setText(temp + " 'C");
                 txtHeartRate.setText(hRate + " BPM");
+                txtSteps.setText(Integer.toString(latestNumSteps) + " steps");
+                imgSteps.setRotation(latestNumSteps/5000f * 360f);
 
                 //set color
                 try {
-                    if (Integer.parseInt(temp) > 38)
+                    if (Integer.parseInt(temp) < 35 || Integer.parseInt(temp) > 38)
                         txtBodyTemp.setTextColor(Color.RED);
                     else txtBodyTemp.setTextColor(Color.GREEN);
                     if (Integer.parseInt(hRate) > 100 || Integer.parseInt(hRate) < 60)
