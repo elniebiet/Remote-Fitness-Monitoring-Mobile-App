@@ -43,7 +43,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -70,6 +73,15 @@ public class MainActivity extends AppCompatActivity
     private TextView txtBodyTemp;
     private TextView txtHeartRate;
     private TextView txtStatus;
+    private int latestNumSteps = 0;
+    private int latestHeartRate = 0;
+    private int latestBodyTemp = 0;
+    private String latestTimeStamp = "";
+    private String latestHour = "";
+    private String latestMinute = "";
+    private String latestDay = "";
+    private String todayDay = "";
+
 
     BluetoothConnectionService mBluetoothConnection;
     private static final UUID MY_UUID_INSECURE =
@@ -121,6 +133,9 @@ public class MainActivity extends AppCompatActivity
             startConnection();
             readings = "";
             LocalBroadcastManager.getInstance(this).registerReceiver(rReceiver, new IntentFilter("incomingReadings"));
+            if(dbcreated){
+                getLatestReadings();
+            }
         }
         backFromActivity = 0;
     }
@@ -146,7 +161,7 @@ public class MainActivity extends AppCompatActivity
         try {
             sqLiteDatabase = this.openOrCreateDatabase("FitnessMonitorDB", MODE_PRIVATE, null);
             sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS tblUserProfile (id INT(1) PRIMARY KEY NOT NULL, email VARCHAR, firstName VARCHAR, lastName VARCHAR, gender VARCHAR, DOB VARCHAR, height INT(3), weight INT(3), picLocation VARCHAR, picType VARCHAR)");
-            sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS tblReadings (bodyTemp VARCHAR, heartRate VARCHAR, numOfSteps BIGINT(10), timeRecorded TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)");
+            sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS tblReadings (bodyTemp INT(3), heartRate INT(4), numOfSteps BIGINT(10), timeRecorded TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)");
             sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS tblDeviceID (deviceID VARCHAR)");
 //            this.deleteDatabase("FitnessMonitorDB"); //to drob db
             Log.i("SUCCESS CREATING DB: ", "database created");
@@ -301,17 +316,30 @@ public class MainActivity extends AppCompatActivity
             LocalBroadcastManager.getInstance(this).registerReceiver(rReceiver, new IntentFilter("incomingReadings"));
         }
 
-    }
+        //Check is its a new day, set number of steps to 0, else set number of steps to the latest
+        if(dbcreated) {
+            getLatestReadings();
+            //check if its a new day, reset the number of steps
+            checkNewDaySetNumSteps();
+        }
 
-//    @Override
-//    public void onBackPressed() {
-//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-//        if (drawer.isDrawerOpen(GravityCompat.START)) {
-//            drawer.closeDrawer(GravityCompat.START);
-//        } else {
-//            super.onBackPressed();
-//        }
-//    }
+
+        //find difference
+//        Date dtCurrentTime = stringToTimeStamp(currentTimeStamp);
+//        Date dtLastesTime  = stringToTimeStamp(latestTimeStamp);
+//        System.out.println("CURRENT TIMESTAMP: " + dtCurrentTime + "   "+ dtLastesTime);
+//        long milliseconds = dtCurrentTime.getTime() - dtLastesTime.getTime();
+//        int seconds = (int) milliseconds / 1000;
+//
+//        int hours = seconds / 3600;
+//        int minutes = (seconds % 3600) / 60;
+//        seconds = (seconds % 3600) % 60;
+//        System.out.println("Difference: ");
+//        System.out.println(" Hours: " + hours);
+//        System.out.println(" Minutes: " + minutes);
+//        System.out.println(" Seconds: " + seconds);
+
+    }
 
 //    @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -378,10 +406,23 @@ public class MainActivity extends AppCompatActivity
      * starting chat service method
      */
     public void startBTConnection(BluetoothDevice device, UUID uuid){
+        //this method is observed to start before the Oncreate finishes loading
+        //so we check for update readings here as well.
         Log.d("", "startBTConnection: Initializing RFCOM Bluetooth Connection.");
         System.out.println("startBTConnection: Initializing RFCOM Bluetooth Connection");
         System.out.println("mBluetoothConnection is "+ mBluetoothConnection);
-        mBluetoothConnection.startClient(device,uuid);
+
+        //on start of new BT connection
+        //get latestReadings and send new update
+        getLatestReadings();
+        //check for new day
+        Boolean newDay = checkNewDaySetNumSteps();
+        latestNumSteps = (newDay) ? 0 : latestNumSteps;
+
+        String updateString = Integer.toString(latestNumSteps);
+
+        mBluetoothConnection.startClient(device, uuid, updateString);
+        
     }
 
     BroadcastReceiver rReceiver = new BroadcastReceiver() {
@@ -391,10 +432,23 @@ public class MainActivity extends AppCompatActivity
             System.out.println("FROM ACTIVITY: READINGS: "+ readings);
             //get readings from activity, confirm it is the right reading
             if(readings.contains("|")) {
+
+                //while reading, be checking for a newday, if its a new day, send update to fitness device
+                getLatestReadings();
+                //check if its a new day, reset the number of steps
+                Boolean newDay = checkNewDaySetNumSteps();
+                if(newDay == true){
+                    //send update to fitness device
+                    Log.i("SENDING UPDATE: ", "SENDING NEWDAY UPDATE");
+                    byte[] bytes = Integer.toString(latestNumSteps).getBytes(Charset.defaultCharset());
+                    mBluetoothConnection.write(bytes);
+                }
+
                 String[] splitted = splitString(readings);
                 String temp = splitted[0];
                 String hRate = splitted[1];
-                String BPM = splitted[2];
+                String numSteps = splitted[2];
+                String currentTS = getCurrentTimeStamp();
                 //display on View
                 txtBodyTemp.setText(temp + " 'C");
                 txtHeartRate.setText(hRate + " BPM");
@@ -412,12 +466,12 @@ public class MainActivity extends AppCompatActivity
                 }
                 //write to database
                 try {
-                    String query = "INSERT INTO tblReadings (bodyTemp, heartRate, numOfSteps, timeRecorded) VALUES ('" + temp + "', '" + BPM + "', '" + hRate + "', '')";
+                    String query = "INSERT INTO tblReadings (bodyTemp, heartRate, numOfSteps, timeRecorded) VALUES (" + temp + ", " + hRate + ", " + numSteps + ", '"+ currentTS + "')";
 //                    System.out.println("INSERT QUERY: " + query);
                     sqLiteDatabase.execSQL(query);
                     Log.i("SUCCESSFUL INSERT: ","readings inserted to db" );
                 } catch(Exception ex){
-                    Log.i("FAILED INSERT: ","failed to insert readings to db" );
+                    Log.i("FAILED INSERT: ","failed to insert readings to db: " + ex.getLocalizedMessage());
                 }
             }
 
@@ -437,5 +491,88 @@ public class MainActivity extends AppCompatActivity
         parts[2] = str.substring(secondPipe+1, str.length());
 
         return parts;
+    }
+
+    private void getLatestReadings(){
+        try {
+            Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM tblReadings ORDER BY timeRecorded DESC LIMIT 1", null);
+            int dateIndex = cursor.getColumnIndex("timeRecorded");
+            int numStepsIndex = cursor.getColumnIndex("numOfSteps");
+            int heartRateIndex = cursor.getColumnIndex("heartRate");
+            int bodyTempIndex = cursor.getColumnIndex("bodyTemp");
+            boolean cursorResponse = cursor.moveToFirst();
+
+            if (cursorResponse) {
+                //get latest timestamp and number of steps
+                latestTimeStamp = cursor.getString(dateIndex);
+                latestNumSteps = cursor.getInt(numStepsIndex);
+                latestHeartRate = cursor.getInt(heartRateIndex);
+                latestBodyTemp = cursor.getInt(bodyTempIndex);
+
+                String datetimeParts[] = latestTimeStamp.split(":");
+                String dateHourParts[] = datetimeParts[0].split("-");
+                String hourParts[] = dateHourParts[2].split(" ");
+                latestDay = hourParts[0];
+                latestHour = hourParts[1];
+                latestMinute = datetimeParts[1];
+
+                System.out.println("LATEST READINGS: " + cursor.getString(dateIndex) + " " + latestNumSteps + " " + latestBodyTemp + " " + latestHeartRate + " hour: " + hourParts[1] + " Minute: "+ latestMinute);
+
+
+
+            } else {
+                latestNumSteps = 0;
+                latestBodyTemp = 0;
+                latestHeartRate = 0;
+                System.out.println("LATEST READINGS: " + latestNumSteps + " " + latestBodyTemp + " " + latestHeartRate);
+            }
+        } catch (Exception ex){
+            Log.i("ERR GETNG LATST READGS ", ex.getMessage());
+        }
+    }
+
+    public static String getCurrentTimeStamp(){
+        try {
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String currentDateTime = dateFormat.format(new Date()); // Find todays date
+
+            return currentDateTime;
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return null;
+        }
+    }
+
+    public Date stringToTimeStamp(String strTime){
+        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date d = null;
+        try {
+            //convert string to date
+            d = inputFormat.parse(strTime);
+        } catch (Exception ex) {
+            System.out.println("Date Format Not Supported");
+            ex.printStackTrace();
+        }
+        return d;
+    }
+
+    public boolean checkNewDaySetNumSteps(){
+        //get current time
+        String currentTimeStamp = getCurrentTimeStamp();
+        String datetimeParts[] = currentTimeStamp.split(":");
+        String dateHourParts[] = datetimeParts[0].split("-");
+        String hourParts[] = dateHourParts[2].split(" ");
+        todayDay = hourParts[0];
+        System.out.println("TODAY: " + todayDay + " LATEST READNG: "+ latestDay);
+        if((Integer.parseInt(todayDay) - Integer.parseInt(latestDay)) > 0){
+            //its a new day
+            latestNumSteps = 0;
+            return true;
+        } else {
+            ; //latest number of steps already set
+            return false;
+        }
     }
 }

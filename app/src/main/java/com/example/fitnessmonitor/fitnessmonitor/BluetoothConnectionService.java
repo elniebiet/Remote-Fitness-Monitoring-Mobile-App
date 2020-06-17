@@ -49,6 +49,8 @@ public class BluetoothConnectionService {
 
     private ConnectedThread mConnectedThread;
 
+    private String updateString = "";
+
     public BluetoothConnectionService(Context context) {
         mContext = context;
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -214,9 +216,9 @@ public class BluetoothConnectionService {
      Then ConnectThread starts and attempts to make a connection with the other devices AcceptThread.
      **/
 
-    public void startClient(BluetoothDevice device,UUID uuid){
+    public void startClient(BluetoothDevice device,UUID uuid, String us){
         Log.d(TAG, "startClient: Started.");
-
+        updateString = us;
         //initprogress dialog
         mProgressDialog = ProgressDialog.show(mContext,"Connecting Bluetooth"
                 ,"Fitness device must turned on....",true);
@@ -266,6 +268,10 @@ public class BluetoothConnectionService {
             int bytes; // bytes returned from read()
             String msg = "";
 
+            //send update to arduino before listening
+            byte[] byteToSend = updateString.getBytes(Charset.defaultCharset());
+            this.write(byteToSend);
+
             // Keep listening to the InputStream until an exception occurs
             while (true) {
                 // Read from the InputStream
@@ -302,15 +308,15 @@ public class BluetoothConnectionService {
         }
 
         //Call this from the main activity to send data to the remote device
-//        public void write(byte[] bytes) {
-//            String text = new String(bytes, Charset.defaultCharset());
-//            Log.d(TAG, "write: Writing to outputstream: " + text);
-//            try {
-//                mmOutStream.write(bytes);
-//            } catch (IOException e) {
-//                Log.e(TAG, "write: Error writing to output stream. " + e.getMessage() );
-//            }
-//        }
+        public void write(byte[] bytes) {
+            String text = new String(bytes, Charset.defaultCharset());
+            Log.d(TAG, "write: Writing to outputstream: " + text);
+            try {
+                mmOutStream.write(bytes);
+            } catch (IOException e) {
+                Log.e(TAG, "write: Error writing to output stream. " + e.getMessage() );
+            }
+        }
 
         /* Call this from the main activity to shutdown the connection */
         public void cancel() {
@@ -328,19 +334,19 @@ public class BluetoothConnectionService {
         mConnectedThread.start();
     }
 
-//    /**
-//     * Write to the ConnectedThread in an unsynchronized manner
-//     *
-//     * @param out The bytes to write
-//     * @see ConnectedThread#write(byte[])
-//     */
-//    public void write(byte[] out) {
-//        // Create temporary object
-//        ConnectedThread r;
-//
-//        // Synchronize a copy of the ConnectedThread
-//        Log.d(TAG, "write: Write Called.");
-//        //perform the write
-//        mConnectedThread.write(out);
-//    }
+    /**
+     * Write to the ConnectedThread in an unsynchronized manner
+     *
+     * @param out The bytes to write
+     * @see ConnectedThread#write(byte[])
+     */
+    public void write(byte[] out) {
+        // Create temporary object
+        ConnectedThread r;
+
+        // Synchronize a copy of the ConnectedThread
+        Log.d(TAG, "write: Write Called.");
+        //perform the write
+        mConnectedThread.write(out);
+    }
 }
