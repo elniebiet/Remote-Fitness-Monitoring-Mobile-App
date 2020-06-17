@@ -48,6 +48,13 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ConnectDevice" />
         <activity android:name=".UserProfile"></activity>
+
+        <meta-data android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyADjGr1P8uXe4bCeSq51nbLaIHsYLyiQ1I"/>
     </application>
 
 </manifest>

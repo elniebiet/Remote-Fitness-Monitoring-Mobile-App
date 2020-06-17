@@ -1,6 +1,9 @@
 package com.example.fitnessmonitor.fitnessmonitor;
 
+import android.app.Fragment;
 import android.graphics.Point;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Display;
@@ -8,7 +11,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-public class ExerciseRunning extends AppCompatActivity {
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+//public class ExerciseRunning extends AppCompatActivity {
+public class ExerciseRunning extends FragmentActivity implements OnMapReadyCallback {
+    private GoogleMap mMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +68,7 @@ public class ExerciseRunning extends AppCompatActivity {
         setMargins(flCount, 0,flCountMarginTop,0,0);
         flCount.setLayoutParams(flCountLayoutParams);
         //set flCounting height
-        int flCountingHeight = (int)(0.08 * height);
+        int flCountingHeight = (int)(0.06 * height);
         int flCountingMarginTop = 0;
         FrameLayout flCounting = (FrameLayout) findViewById(R.id.flCounting);
         ViewGroup.LayoutParams flCountingLayoutParams = flCounting.getLayoutParams();
@@ -76,8 +89,14 @@ public class ExerciseRunning extends AppCompatActivity {
         FrameLayout flStart = (FrameLayout) findViewById(R.id.flStart);
         ViewGroup.LayoutParams flStartLayoutParams = flStart.getLayoutParams();
         flStartLayoutParams.height = flStartHeight;//(int)(grdMainHeight * 0.9);
-        setMargins(flStart, 0,flStartMarginTop,0,0);
+        setMargins(flStart, 0,15,0,0);
         flStart.setLayoutParams(flStartLayoutParams);
+
+        FragmentManager fm = getSupportFragmentManager();
+        SupportMapFragment supportMapFragment =  SupportMapFragment.newInstance();
+        fm.beginTransaction().replace(flMap.getId(), supportMapFragment).commit();
+        supportMapFragment.getMapAsync(this);
+
     }
 
     public void goBackHome(View view){
@@ -90,5 +109,15 @@ public class ExerciseRunning extends AppCompatActivity {
             p.setMargins(l, t, r, b);
             v.requestLayout();
         }
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        //add marker
+        LatLng sydney = new LatLng(-34, 151);
+        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 }
