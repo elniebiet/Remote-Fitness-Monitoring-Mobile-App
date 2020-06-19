@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity
     private String todayDay = "";
     private ImageView imgSteps;
     private TextView txtSteps;
+    private static int currentNumSteps = 0;
 
     BluetoothConnectionService mBluetoothConnection;
     private static final UUID MY_UUID_INSECURE =
@@ -464,6 +465,15 @@ public class MainActivity extends AppCompatActivity
                 txtSteps.setText(Integer.toString(latestNumSteps) + " steps");
                 imgSteps.setRotation(latestNumSteps/5000f * 360f);
 
+//                currentNumSteps = Integer.parseInt(numSteps);
+
+                //create intent to send number of steps as broadcast to Exercise Running
+                Intent intSendReadings = new Intent("currentReadings");
+                intSendReadings.putExtra("mainActReadings", numSteps);
+                Log.i("MAIN SENT MESSAGE: ", numSteps);
+                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intSendReadings);
+
+
                 //set color
                 try {
                     if (Integer.parseInt(temp) < 35 || Integer.parseInt(temp) > 38)
@@ -586,4 +596,9 @@ public class MainActivity extends AppCompatActivity
             return false;
         }
     }
+
+    public static int getCurrentNumSteps(){
+        return currentNumSteps;
+    }
+
 }
