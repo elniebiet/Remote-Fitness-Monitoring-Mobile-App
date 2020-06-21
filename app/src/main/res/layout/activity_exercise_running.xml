@@ -126,7 +126,7 @@
                         android:layout_height="30dp"
                         android:layout_marginTop="15dp"
                         android:paddingTop="3dp"
-                        android:text="0 cal"
+                        android:text="0 kcal"
                         android:textAlignment="center"
                         android:textSize="16sp" />
 
@@ -203,7 +203,7 @@
             android:layout_height="50dp"
             android:layout_column="0"
             android:layout_row="3"
-            android:visibility="invisible">
+            android:visibility="visible">
 
             <Button
                 android:id="@+id/btnMinus"
