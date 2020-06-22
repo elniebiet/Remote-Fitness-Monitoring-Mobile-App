@@ -68,20 +68,20 @@
             app:srcCompat="@drawable/clock" />
 
             <ImageView
-            android:id="@+id/imgFrom"
-            android:layout_width="170dp"
-            android:layout_height="170dp"
-            android:layout_margin="115dp"
-            android:visibility="invisible"
-            app:srcCompat="@drawable/from" />
+                android:id="@+id/imgFrom"
+                android:layout_width="170dp"
+                android:layout_height="170dp"
+                android:layout_margin="115dp"
+                android:visibility="visible"
+                app:srcCompat="@drawable/from" />
 
             <ImageView
-            android:id="@+id/imgTo"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_margin="160dp"
-            android:visibility="invisible"
-            app:srcCompat="@drawable/to2" />
+                android:id="@+id/imgTo"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_margin="160dp"
+                android:visibility="visible"
+                app:srcCompat="@drawable/to2" />
         </FrameLayout>
 
         <FrameLayout

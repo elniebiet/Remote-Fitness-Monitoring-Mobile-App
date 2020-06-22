@@ -23,26 +23,122 @@
         <FrameLayout
             android:id="@+id/flCounting"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_column="0"
             android:layout_row="3"
-            android:visibility="invisible">
+            android:visibility="visible">
 
-            <TextView
-                android:id="@+id/lblProgress"
-                android:layout_width="80dp"
+            <GridLayout
+                android:id="@+id/grdCounting"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="70dp"
-                android:text="Progress: "
-                android:textSize="18sp" />
+                android:columnCount="4"
+                android:rowCount="1">
 
-            <TextView
-                android:id="@+id/txtProgress"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="160dp"
-                android:text="0.0 / 1.0 km"
-                android:textSize="30sp" />
+                <FrameLayout
+                    android:id="@+id/flDuration"
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:layout_column="0"
+                    android:layout_row="0">
+
+                    <TextView
+                        android:id="@+id/txtDuration"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:layout_marginTop="15dp"
+                        android:paddingTop="3dp"
+                        android:text="0 min"
+                        android:textAlignment="center"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/lblDuration"
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"
+                        android:text="Duration"
+                        android:textAlignment="center"
+                        android:textStyle="italic" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/flDistance"
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:layout_column="1"
+                    android:layout_row="0">
+
+                    <TextView
+                        android:id="@+id/txtDistanceCovered"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:layout_marginTop="15dp"
+                        android:paddingTop="3dp"
+                        android:text="0 m"
+                        android:textAlignment="center"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/lblDistanceCovered"
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"
+                        android:text="Distance"
+                        android:textAlignment="center"
+                        android:textStyle="italic" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/flPaces"
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:layout_column="2"
+                    android:layout_row="0">
+
+                    <TextView
+                        android:id="@+id/txtPaces"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:layout_marginTop="15dp"
+                        android:paddingTop="3dp"
+                        android:text="0 "
+                        android:textAlignment="center"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/lblPaces"
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"
+                        android:text="Paces"
+                        android:textAlignment="center"
+                        android:textStyle="italic" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/flCalories"
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:layout_column="3"
+                    android:layout_row="0">
+
+                    <TextView
+                        android:id="@+id/txtCalories"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:layout_marginTop="15dp"
+                        android:paddingTop="3dp"
+                        android:text="0 kcal"
+                        android:textAlignment="center"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/lblCalories"
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"
+                        android:text="Cal Burnt"
+                        android:textAlignment="center"
+                        android:textStyle="italic" />
+                </FrameLayout>
+            </GridLayout>
         </FrameLayout>
 
         <FrameLayout
@@ -63,14 +159,14 @@
         </FrameLayout>
 
         <FrameLayout
-            android:id="@+id/flWalking"
+            android:id="@+id/flRunning"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_column="0"
             android:layout_row="1">
 
             <TextView
-                android:id="@+id/lblWalking"
+                android:id="@+id/lblRunning"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="Walking"
@@ -96,31 +192,27 @@
 
             <Spinner
                 android:id="@+id/spnTarget"
-                android:layout_width="100dp"
+                android:layout_width="190dp"
                 android:layout_height="30dp"
-                android:layout_marginLeft="170dp" />
+                android:layout_marginLeft="160dp" />
         </FrameLayout>
 
         <FrameLayout
             android:id="@+id/flCount"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_column="0"
             android:layout_row="3"
             android:visibility="visible">
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-            </FrameLayout>
-
             <Button
-                android:id="@+id/btnPlus"
+                android:id="@+id/btnMinus"
                 android:layout_width="60dp"
-                android:layout_height="match_parent"
+                android:layout_height="40dp"
                 android:layout_marginLeft="60dp"
-                android:text="+"
+                android:background="@color/wallet_holo_blue_light"
+                android:onClick="btnMinusClicked"
+                android:text="-"
                 android:textAlignment="center"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -136,22 +228,25 @@
                 android:textStyle="bold" />
 
             <Button
-                android:id="@+id/btnMinus"
+                android:id="@+id/btnPlus"
                 android:layout_width="60dp"
-                android:layout_height="match_parent"
+                android:layout_height="40dp"
                 android:layout_marginLeft="280dp"
-                android:text="-"
+                android:background="@color/wallet_holo_blue_light"
+                android:onClick="btnPlusClicked"
+                android:text="+"
                 android:textAlignment="center"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/txtUnit"
-                android:layout_width="30dp"
-                android:layout_height="15dp"
-                android:layout_marginLeft="190dp"
+                android:layout_width="70dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="165dp"
                 android:layout_marginTop="25dp"
-                android:text="km" />
+                android:text="meters"
+                android:textAlignment="center" />
 
         </FrameLayout>
 
@@ -162,6 +257,14 @@
             android:layout_column="0"
             android:layout_row="4"
             android:background="@color/colorAsh">
+
+            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/map"
+                tools:context=".ExerciseRunning"
+                android:name="com.google.android.gms.maps.SupportMapFragment" />
 
         </FrameLayout>
 
@@ -177,6 +280,7 @@
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="100dp"
+                android:onClick="startCounting"
                 android:text="Start"
                 android:textSize="16sp"
                 android:textStyle="bold"

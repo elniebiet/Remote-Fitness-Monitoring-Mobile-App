@@ -95,7 +95,7 @@ public class ExerciseRunning extends FragmentActivity implements OnMapReadyCallb
     private LocationManager locationManager;
     private LocationListener locationListener;
     private int userWeight = 70; //70kg as default weight
-    private int userHeight = 170; //default height in cm
+    private int userHeight = 170; //170cm as default height in cm
     private SQLiteDatabase sqLiteDatabase = null;
     private int profileDetailsSupplied;
     private CountDownTimer runningTime;
@@ -249,7 +249,6 @@ public class ExerciseRunning extends FragmentActivity implements OnMapReadyCallb
         spnTarget.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//                Toast.makeText(getApplicationContext(), "Selected: " + lstTarget.get(i), Toast.LENGTH_SHORT).show();
                 Log.i("SELECTED TARGET: ", lstTarget.get(i));
                 selectedTargetIndex = i;
                 switch (selectedTargetIndex) {
@@ -319,8 +318,7 @@ public class ExerciseRunning extends FragmentActivity implements OnMapReadyCallb
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        //get weight and height
-        /*create database*/
+        //get weight and height if supplied
         try {
             sqLiteDatabase = this.openOrCreateDatabase("FitnessMonitorDB", MODE_PRIVATE, null);
         } catch (Exception ex){
@@ -496,15 +494,20 @@ public class ExerciseRunning extends FragmentActivity implements OnMapReadyCallb
             //request permission if not granted
             if (ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
-            } else { //get current location
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 12000, 0, locationListener);
-                Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            } else {
+                //get current location
+                try {
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 12000, 0, locationListener);
+                    Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-                mMap.clear();
-                mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                LatLng userLocation = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
-                mMap.addMarker(new MarkerOptions().position(userLocation).title("Your Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 17));
+                    mMap.clear();
+                    mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                    LatLng userLocation = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+                    mMap.addMarker(new MarkerOptions().position(userLocation).title("Your Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 17));
+                } catch(Exception ex){
+                    Log.i("ERROR GETTING LOCATN: ", ex.getMessage());
+                }
             }
         }
     }

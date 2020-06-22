@@ -465,7 +465,11 @@ public class MainActivity extends AppCompatActivity
                 txtSteps.setText(Integer.toString(latestNumSteps) + " steps");
                 imgSteps.setRotation(latestNumSteps/5000f * 360f);
 
-                currentNumSteps = Integer.parseInt(numSteps.trim());
+                try {
+                    currentNumSteps = Integer.parseInt(numSteps.trim());
+                }catch (Exception ex){
+                    Log.i("CURRENTNUMSTEPS MAIN", ex.getMessage());
+                }
 
                 //create intent to send number of steps as broadcast to Exercise Running
                 Intent intSendReadings = new Intent("currentReadings");

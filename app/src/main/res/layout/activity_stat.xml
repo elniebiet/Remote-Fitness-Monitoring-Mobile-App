@@ -41,6 +41,13 @@
             android:layout_marginTop="200dp"
             android:background="@color/colorAsh">
 
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/greengraph" />
+
             <TextView
                 android:id="@+id/lblHourlyBreakDown"
                 android:layout_width="match_parent"
@@ -48,6 +55,12 @@
                 android:text="Hourly Breakdown"
                 android:textAlignment="center"
                 android:textSize="18sp" />
+
+            <com.example.fitnessmonitor.fitnessmonitor.views.PlotView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+
         </FrameLayout>
 
         <FrameLayout
@@ -113,7 +126,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40dp"
-                android:text="0/6000"
+                android:text="0/5000"
                 android:textAlignment="center"
                 android:textSize="40sp" />
 

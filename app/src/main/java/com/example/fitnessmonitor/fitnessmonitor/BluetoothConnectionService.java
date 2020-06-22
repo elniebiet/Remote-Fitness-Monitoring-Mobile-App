@@ -217,14 +217,19 @@ public class BluetoothConnectionService {
      **/
 
     public void startClient(BluetoothDevice device,UUID uuid, String us){
-        Log.d(TAG, "startClient: Started.");
-        updateString = us;
-        //initprogress dialog
-        mProgressDialog = ProgressDialog.show(mContext,"Connecting Bluetooth"
-                ,"Fitness device must turned on....",true);
 
-        mConnectThread = new ConnectThread(device, uuid);
-        mConnectThread.start();
+        try {
+            Log.d(TAG, "startClient: Started.");
+            updateString = us;
+            //initprogress dialog
+            mProgressDialog = ProgressDialog.show(mContext, "Connecting Bluetooth"
+                    , "Fitness device must turned on....", true);
+
+            mConnectThread = new ConnectThread(device, uuid);
+            mConnectThread.start();
+        } catch(Exception ex){
+            Log.i("BLUETOOTHCSERVICE", "ERROR STARTING BT CLIENT");
+        }
     }
 
     /**
