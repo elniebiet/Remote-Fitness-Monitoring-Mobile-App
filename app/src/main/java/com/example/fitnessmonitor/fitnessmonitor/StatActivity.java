@@ -147,15 +147,6 @@ public class StatActivity extends AppCompatActivity {
         displayPlot();
 
         PlotView plotView = new PlotView(this);
-//        Canvas cvPlot = new Canvas();
-//        plotView.draw(cvPlot);
-
-//        DrawView drawView;
-//        drawView = new DrawView(this);
-//        drawView.setBackgroundColor(Color.RED);
-
-
-//        setContentView(drawView);
 
 
     }

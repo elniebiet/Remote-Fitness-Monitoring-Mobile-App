@@ -333,22 +333,6 @@ public class MainActivity extends AppCompatActivity
             imgSteps.setRotation(latestNumSteps/5000f * 360f);
         }
 
-
-        //find difference
-//        Date dtCurrentTime = stringToTimeStamp(currentTimeStamp);
-//        Date dtLastesTime  = stringToTimeStamp(latestTimeStamp);
-//        System.out.println("CURRENT TIMESTAMP: " + dtCurrentTime + "   "+ dtLastesTime);
-//        long milliseconds = dtCurrentTime.getTime() - dtLastesTime.getTime();
-//        int seconds = (int) milliseconds / 1000;
-//
-//        int hours = seconds / 3600;
-//        int minutes = (seconds % 3600) / 60;
-//        seconds = (seconds % 3600) % 60;
-//        System.out.println("Difference: ");
-//        System.out.println(" Hours: " + hours);
-//        System.out.println(" Minutes: " + minutes);
-//        System.out.println(" Seconds: " + seconds);
-
     }
 
 //    @SuppressWarnings("StatementWithEmptyBody")
