@@ -62,10 +62,10 @@
             android:layout_row="2">
 
             <ImageView
-            android:id="@+id/imgClock"
-            android:layout_width="400dp"
-            android:layout_height="400dp"
-            app:srcCompat="@drawable/clock" />
+                android:id="@+id/imgClock"
+                android:layout_width="400dp"
+                android:layout_height="400dp"
+                app:srcCompat="@drawable/clock12" />
 
             <ImageView
                 android:id="@+id/imgFrom"
@@ -73,7 +73,7 @@
                 android:layout_height="170dp"
                 android:layout_margin="115dp"
                 android:visibility="visible"
-                app:srcCompat="@drawable/from" />
+                app:srcCompat="@drawable/frompointer2" />
 
             <ImageView
                 android:id="@+id/imgTo"
@@ -81,7 +81,7 @@
                 android:layout_height="80dp"
                 android:layout_margin="160dp"
                 android:visibility="visible"
-                app:srcCompat="@drawable/to2" />
+                app:srcCompat="@drawable/topointer" />
         </FrameLayout>
 
         <FrameLayout

@@ -196,7 +196,7 @@ public class StatActivity extends AppCompatActivity {
         String currentTimeStamp = MainActivity.getCurrentTimeStamp();
         Log.i("STAT ACT CTS: ", currentTimeStamp);
         try {
-            String query = "SELECT  * FROM tblReadings WHERE timeRecorded >= date('now', 'start of day', 'localtime')";
+            String query = "SELECT  * FROM tblReadings WHERE timeRecorded >= date('now', '-0 day', 'localtime')";
 
             Cursor cursor = sqLiteDatabase.rawQuery(query, null);
             int dateIndex = cursor.getColumnIndex("timeRecorded");
@@ -204,20 +204,15 @@ public class StatActivity extends AppCompatActivity {
             boolean cursorResponse = cursor.moveToFirst();
 
             if (cursorResponse) {
-                //get first number of steps for the day
-                latestTimeStamp = cursor.getString(dateIndex);
-                latestNumSteps = cursor.getInt(numStepsIndex);
-                String datetimeParts[] = latestTimeStamp.split(":");
-                String dateHourParts[] = datetimeParts[0].split("-");
-                String hourParts[] = dateHourParts[2].split(" ");
-                latestDay = hourParts[0];
-                latestHour = hourParts[1];
-                latestMinute = datetimeParts[1];
-
-//                System.out.println("LATEST READINGS: " + cursor.getString(dateIndex) + " " + latestNumSteps + " " + " hour: " + hourParts[1] + " Minute: "+ latestMinute);
-                lstHour.add(Integer.parseInt(latestHour));
-                lstNumSteps.add(latestNumSteps);
-
+                //ignore first 3 readings
+                int cnt = 0;
+                while(cursor.moveToNext() && cnt < 3){
+                    ; cnt++;
+                }
+                String datetimeParts[];
+                String dateHourParts[];
+                String hourParts[];
+//
                 while(cursor.moveToNext()){
                     //get first number of steps for the day
                     latestTimeStamp = cursor.getString(dateIndex);
@@ -229,7 +224,7 @@ public class StatActivity extends AppCompatActivity {
                     latestHour = hourParts[1];
                     latestMinute = datetimeParts[1];
 
-//                    System.out.println("LATEST READINGS: " + cursor.getString(dateIndex) + " " + latestNumSteps + " " + " hour: " + hourParts[1] + " Minute: "+ latestMinute);
+                    System.out.println("LATEST READINGS: " + cursor.getString(dateIndex) + " " + latestNumSteps + " " + " hour: " + hourParts[1] + " Minute: "+ latestMinute);
                     lstHour.add(Integer.parseInt(latestHour));
                     lstNumSteps.add(latestNumSteps);
                 }
@@ -261,7 +256,7 @@ public class StatActivity extends AppCompatActivity {
                 highestPerHr = Collections.max(tempList);
             }
             mpStepsPerHour.put(i, highestPerHr - lowestPerHr);
-//            System.out.println("LOWEST - HEIGHEST: " + lowestPerHr + " " + highestPerHr);
+            System.out.println("LOWEST - HEIGHEST: " + lowestPerHr + " " + highestPerHr);
         }
 
         for(Map.Entry m: mpStepsPerHour.entrySet()){
