@@ -16,8 +16,12 @@
             android:title="Weekly summary" />
         <item
             android:id="@+id/nav_connect_device"
-            android:icon="@drawable/view_list"
+            android:icon="@drawable/bluetooth"
             android:title="Connect Device" />
+        <item
+            android:id="@+id/nav_nearby"
+            android:icon="@drawable/nearby"
+            android:title="Nearby Health Centres" />
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_menu_manage"

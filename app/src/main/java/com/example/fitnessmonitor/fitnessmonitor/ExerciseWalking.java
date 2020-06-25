@@ -434,6 +434,7 @@ public class ExerciseWalking extends FragmentActivity implements OnMapReadyCallb
         builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 dialog.dismiss();
+                locationManager.removeUpdates(locationListener);
                 finish();
             }
         });

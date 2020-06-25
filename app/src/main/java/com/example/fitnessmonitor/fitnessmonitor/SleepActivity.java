@@ -35,7 +35,7 @@ public class SleepActivity extends AppCompatActivity {
     private ImageView imgFrom;
     private ImageView imgTo;
     private TextView txtDuration;
-
+    private TextView lblSleepTime;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +80,7 @@ public class SleepActivity extends AppCompatActivity {
         imgFrom = (ImageView)findViewById(R.id.imgFrom);
         imgTo = (ImageView)findViewById(R.id.imgTo);
         txtDuration = (TextView)findViewById(R.id.txtDuration);
+        lblSleepTime = (TextView)findViewById(R.id.lblSleepTime);
 
         imgFrom.setVisibility(View.INVISIBLE);
         imgTo.setVisibility(View.INVISIBLE);
@@ -114,8 +115,15 @@ public class SleepActivity extends AppCompatActivity {
         int sleepDetected = 0;
         int sleepLength = 0;
         if(hourlySteps.length() > 4){
+            //check for 10 hrs
+            if(hourlySteps.indexOf("0000000000") != -1){
+                startHr = hourlySteps.indexOf("0000000000");
+                endHr = startHr + 9;
+                sleepDetected = 1;
+                sleepLength = 10;
+            }
             //check for 9 hrs
-            if(hourlySteps.indexOf("000000000") != -1){
+            else if(hourlySteps.indexOf("000000000") != -1){
                 startHr = hourlySteps.indexOf("000000000");
                 endHr = startHr + 8;
                 sleepDetected = 1;
@@ -188,8 +196,12 @@ public class SleepActivity extends AppCompatActivity {
                 txtDuration.setText("Where you asleep ?");
                 imgFrom.setVisibility(View.VISIBLE);
                 imgTo.setVisibility(View.VISIBLE);
-                imgFrom.setRotation(((float)realStartHr / 24.f * 360.f) * 2.0f);
-                imgTo.setRotation(((float)realEndHr / 24.f * 360.f) * 2.0f);
+                float rotationStart = (float)(realStartHr % 12) / 12.f * 360.f;
+                imgFrom.setRotation(rotationStart);
+                float rotationEnd = (float)(realEndHr % 12) / 12.f * 360.f;
+                imgTo.setRotation(rotationEnd);
+                Log.i("ROTATION ANGLE", Float.toString(rotationStart) + " " + Float.toString(rotationEnd));
+                lblSleepTime.setText("Sleep Time: " + Integer.toString(realStartHr) + ":00" + " - " + Integer.toString(realEndHr) + ":00 "+ "(" + Integer.toString(sleepLength) + " hrs )");
 
                 System.out.println("SLEEP DETECTED: " + Integer.toString(realStartHr) + " to " + Integer.toString(realEndHr) + " SLEEP LENGTH: " + Integer.toString(sleepLength) + " CURRENT HR: "+ currentHr);
             } else {
@@ -225,7 +237,6 @@ public class SleepActivity extends AppCompatActivity {
         String currentTimeStamp = MainActivity.getCurrentTimeStamp();
         Log.i("STAT ACT CTS: ", currentTimeStamp);
         try {
-//            String query = "SELECT  * FROM tblReadings WHERE timeRecorded >= date('now', 'start of day', 'localtime')";
             String query = "SELECT  * FROM tblReadings WHERE timeRecorded >= date('now', '-1 day', 'localtime')";
 
             Cursor cursor = sqLiteDatabase.rawQuery(query, null);

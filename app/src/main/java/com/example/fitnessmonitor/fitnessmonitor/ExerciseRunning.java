@@ -99,6 +99,8 @@ public class ExerciseRunning extends FragmentActivity implements OnMapReadyCallb
     private SQLiteDatabase sqLiteDatabase = null;
     private int profileDetailsSupplied;
     private CountDownTimer runningTime;
+    private String myLocationLong = "";
+    private String myLocationLat = "";
 
 
     @Override
@@ -432,6 +434,7 @@ public class ExerciseRunning extends FragmentActivity implements OnMapReadyCallb
         builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 dialog.dismiss();
+                locationManager.removeUpdates(locationListener);
                 finish();
             }
         });
@@ -466,6 +469,9 @@ public class ExerciseRunning extends FragmentActivity implements OnMapReadyCallb
             public void onLocationChanged(Location location) {
                 mMap.clear();
                 mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                myLocationLong = Double.toString(location.getLongitude());
+                myLocationLat = Double.toString(location.getLatitude());
+                System.out.println("MYLOCATION: LONG " + myLocationLong + " LAT " + myLocationLat);
                 LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());                Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 mMap.addMarker(new MarkerOptions().position(userLocation).title("Your Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 17));
@@ -502,6 +508,11 @@ public class ExerciseRunning extends FragmentActivity implements OnMapReadyCallb
 
                     mMap.clear();
                     mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+
+                    myLocationLong = Double.toString(lastKnownLocation.getLongitude());
+                    myLocationLat = Double.toString(lastKnownLocation.getLatitude());
+                    System.out.println("MYLOCATION: LONG " + myLocationLong + " LAT " + myLocationLat);
+
                     LatLng userLocation = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
                     mMap.addMarker(new MarkerOptions().position(userLocation).title("Your Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 17));

@@ -101,14 +101,13 @@
             android:textStyle="bold" />
 
             <TextView
-            android:id="@+id/lblSleepTime"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="140dp"
-            android:layout_marginTop="45dp"
-            android:text="Sleep time"
-            android:textAlignment="center"
-            android:textSize="18sp" />
+                android:id="@+id/lblSleepTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="45dp"
+                android:text="Sleep time"
+                android:textAlignment="center"
+                android:textSize="18sp" />
         </FrameLayout>
 
     </GridLayout>
