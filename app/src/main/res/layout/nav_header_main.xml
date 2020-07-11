@@ -41,7 +41,7 @@
         android:text="useremail@gmail.com"
         android:textAlignment="textStart"
         android:textColor="@android:color/black"
-        android:textSize="18sp" />
+        android:textSize="12sp" />
 
 
 </LinearLayout>

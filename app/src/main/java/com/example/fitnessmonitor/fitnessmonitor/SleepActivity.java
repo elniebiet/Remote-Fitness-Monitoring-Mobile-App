@@ -193,7 +193,7 @@ public class SleepActivity extends AppCompatActivity {
             //check if current hour is greater than 7am
             if(Integer.parseInt(currentHr) > 7){
                 //display detected sleep
-                txtDuration.setText("Where you asleep ?");
+                txtDuration.setText("Were you asleep ?");
                 imgFrom.setVisibility(View.VISIBLE);
                 imgTo.setVisibility(View.VISIBLE);
                 float rotationStart = (float)(realStartHr % 12) / 12.f * 360.f;

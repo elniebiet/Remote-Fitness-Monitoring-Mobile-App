@@ -305,11 +305,11 @@ public class MainActivity extends AppCompatActivity
 
         //set email on drawer
         if(userEmail.length() == 0){
-            txtUserEmail.setText("Add email account to device.");
+            txtUserEmail.setText("Add email account to device." + "\n(User ID: " + deviceID + ")");
             txtUserEmail.setTextColor(Color.GREEN);
             txtUserEmail.setTextSize(14);
         } else {
-            txtUserEmail.setText(userEmail);
+            txtUserEmail.setText(userEmail + "\n(User ID: " + deviceID + ")");
             txtUserEmail.setTextColor(Color.DKGRAY);
             txtUserEmail.setTextSize(14);
         }
@@ -368,6 +368,9 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_nearby) {
             Intent nearbyCentresIntent = new Intent(getApplicationContext(), NearbyHealthCentres.class);
             startActivity(nearbyCentresIntent);
+        } else if(id == R.id.nav_remote_access) {
+            Intent remoteAccessIntent = new Intent(getApplicationContext(), InterUserAccess.class);
+            startActivity(remoteAccessIntent);
         } else if (id == R.id.nav_settings) {
 
         }

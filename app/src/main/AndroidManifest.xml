@@ -55,7 +55,8 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyADjGr1P8uXe4bCeSq51nbLaIHsYLyiQ1I" />
 
-        <activity android:name=".views.NearbyHealthCentres"></activity>
+        <activity android:name=".views.NearbyHealthCentres" />
+        <activity android:name=".InterUserAccess"></activity>
     </application>
 
 </manifest>
