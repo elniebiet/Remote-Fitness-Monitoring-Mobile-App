@@ -57,13 +57,36 @@ public class InterUserAccess extends AppCompatActivity {
     private FrameLayout frmCalories;
     private EditText edtSearch;
     private Button btnDiscoverability;
+    private String deviceID = "";
     private int discoverable = 0;
+    private SQLiteDatabase sqLiteDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inter_user_access);
 
+        //check device discoverability
+        sqLiteDatabase = this.openOrCreateDatabase("FitnessMonitorDB", MODE_PRIVATE, null);
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM tblDeviceID", null);
+        int idIndex = cursor.getColumnIndex("deviceID");
+        int discoverableIndex = cursor.getColumnIndex("discoverable");
+
+        boolean cursorResponse = cursor.moveToFirst();
+
+        try {
+            if (cursorResponse) {
+                //get the device id and device discoverability
+                deviceID = cursor.getString(idIndex);
+                discoverable = cursor.getInt(discoverableIndex);
+                Log.i("DEVICE ID IS: ", deviceID);
+
+            } else {
+
+            }
+        } catch(Exception ex){
+            System.out.println("INTER-USER: ERROR GETTING DEVICE ID");
+        }
 
         //get current screen dimensions
         Display display = getWindowManager().getDefaultDisplay();
@@ -139,47 +162,17 @@ public class InterUserAccess extends AppCompatActivity {
 
         edtSearch = (EditText) findViewById(R.id.edtSearch);
         btnDiscoverability = (Button) findViewById(R.id.btnDiscoverability);
+        //Check initial state of discoverability
+        if(discoverable == 1){
+            //device discoverable
+            btnDiscoverability.setText("DISABLE DISCOVERABILITY");
+        } else {
+            btnDiscoverability.setText("ENABLE DISCOVERABILITY");
+        }
 
         //calculate distance covered and calories burnt
 //        currentDistanceCovered = (int)(userHeight / 100 * 0.45 * currentNumberOfSteps); //in meters
 //        currentCaloriesBurnt = (int) (userWeight * currentDistanceCovered * 1.036); //in calories
-
-
-
-
-
-
-
-
-//        //set frmDistanceCovered height
-//        int flDistanceHeight = (int)(0.15 * height);
-//        int flDistanceMarginTop = frmDailyStepsMarginTop + frmDailyStepsHeight + 10;
-//        FrameLayout flDistance = (FrameLayout) findViewById(R.id.frmDistanceCovered);
-//        ViewGroup.LayoutParams flDistanceParamsLayout = flDistance.getLayoutParams();
-//        flDistanceParamsLayout.height = flDistanceHeight;//(int)(grdMainHeight * 0.9);
-//        setMargins(flDistance, 0,flDistanceMarginTop,0,0);
-//        flDistance.setLayoutParams(flDistanceParamsLayout);
-//        //set frmCalories height
-//        int flCaloriesMarginTop = flDistanceMarginTop + flDistanceHeight + 10;
-//        FrameLayout flCalories = (FrameLayout) findViewById(R.id.frmCalories);
-//        ViewGroup.LayoutParams flCaloriesLayoutParams = flCalories.getLayoutParams();
-//        flCaloriesLayoutParams.height = flDistanceHeight;//(int)(grdMainHeight * 0.9);
-//        setMargins(flCalories, 0,flCaloriesMarginTop,0,0);
-//        flCalories.setLayoutParams(flCaloriesLayoutParams);
-//
-//        txtStepsToday = (TextView) findViewById(R.id.txtStepsToday);
-//        txtDistance = (TextView) findViewById(R.id.txtDistance);
-//        txtCalories = (TextView) findViewById(R.id.txtCalories);
-//
-//
-//        currentNumberOfSteps = MainActivity.getCurrentNumSteps();
-//        currentDistanceCovered = (int)(userHeight / 100 * 0.45 * currentNumberOfSteps); //in meters
-//        currentCaloriesBurnt = (int) (userWeight * currentDistanceCovered * 1.036); //in calories
-//
-//        txtStepsToday.setText(Integer.toString(currentNumberOfSteps));
-//        txtDistance.setText(String.format("%.2f km", currentDistanceCovered/1000.0f));
-//        txtCalories.setText(String.format("%.2f kcal", currentCaloriesBurnt/1000.0f)); //output in kcal
-
 
 
 
@@ -209,9 +202,37 @@ public class InterUserAccess extends AppCompatActivity {
     }
 
     public void btnDiscoverabilityClicked(View view){
-        String btnText = btnDiscoverability.getText().toString();
+        //check discoverabiltiy
+        if(discoverable == 0) {
+            discoverable = 1; //toggle disvoverability
+            btnDiscoverability.setText("DISABLE DISCOVERABILITY");
+            //update database
+            try {
+                String query = "UPDATE tblDeviceID SET discoverable = 1 WHERE deviceID = '" + deviceID + "';";
+                sqLiteDatabase.execSQL(query);
+                Log.i("SUCCESS UPDATING DIS", "set discoverability to 1");
 
-        Toast.makeText(getApplicationContext(), btnText, Toast.LENGTH_SHORT).show();
+            } catch(Exception e){
+                Log.i("ERROR UPDATING DISC", "Couldnt Update discoverability");
+                e.printStackTrace();
+            }
+            Toast.makeText(getApplicationContext(), "Device is now visible", Toast.LENGTH_SHORT).show();
+        } else {
+            discoverable = 0; //toggle disvoverability
+            btnDiscoverability.setText("ENABLE DISCOVERABILITY");
+            //update database
+            try {
+                String query = "UPDATE tblDeviceID SET discoverable = 0 WHERE deviceID = '" + deviceID + "';";
+                sqLiteDatabase.execSQL(query);
+                Log.i("SUCCESS UPDATING DIS", "set discoverability to 0");
+
+            } catch(Exception e){
+                Log.i("ERROR UPDATING DISC", "Couldnt update discoverability");
+                e.printStackTrace();
+            }
+            Toast.makeText(getApplicationContext(), "Device is no longer visible", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
 }

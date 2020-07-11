@@ -89,11 +89,12 @@ public class MainActivity extends AppCompatActivity
     private String latestTimeStamp = "";
     private String latestHour = "";
     private String latestMinute = "";
-    private String latestDay = "";
+    private String latestDay = "1";
     private String todayDay = "";
     private ImageView imgSteps;
     private TextView txtSteps;
     private static int currentNumSteps = 0;
+    public static int deviceDiscoverable = 0;
 
     BluetoothConnectionService mBluetoothConnection;
     private static final UUID MY_UUID_INSECURE =
@@ -180,7 +181,7 @@ public class MainActivity extends AppCompatActivity
             sqLiteDatabase = this.openOrCreateDatabase("FitnessMonitorDB", MODE_PRIVATE, null);
             sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS tblUserProfile (id INT(1) PRIMARY KEY NOT NULL, email VARCHAR, firstName VARCHAR, lastName VARCHAR, gender VARCHAR, DOB VARCHAR, height INT(3), weight INT(3), picLocation VARCHAR, picType VARCHAR)");
             sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS tblReadings (bodyTemp INT(3), heartRate INT(4), numOfSteps BIGINT(10), timeRecorded TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)");
-            sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS tblDeviceID (deviceID VARCHAR)");
+            sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS tblDeviceID (deviceID VARCHAR, discoverable INT(1))");
 //            this.deleteDatabase("FitnessMonitorDB"); //to drob db
             Log.i("SUCCESS CREATING DB: ", "database created");
             dbcreated = true;
@@ -193,12 +194,14 @@ public class MainActivity extends AppCompatActivity
         if(dbcreated){
             Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM tblDeviceID", null);
             int idIndex = cursor.getColumnIndex("deviceID");
+            int discoverableIndex = cursor.getColumnIndex("discoverable");
 
             boolean cursorResponse = cursor.moveToFirst();
 
             if(cursorResponse){
                 //get the device id
                 deviceID = cursor.getString(idIndex);
+                deviceDiscoverable = cursor.getInt(discoverableIndex);
                 Log.i("DEVICE ID IS: ", deviceID);
 
             } else {
@@ -208,7 +211,7 @@ public class MainActivity extends AppCompatActivity
                 Long tsLong = System.currentTimeMillis()/1000;
                 String userID = "USER"+tsLong.toString();
                 try {
-                    sqLiteDatabase.execSQL("INSERT INTO tblDeviceID (deviceID) VALUES ('"+userID+"')");
+                    sqLiteDatabase.execSQL("INSERT INTO tblDeviceID (deviceID, discoverable) VALUES ('"+userID+"', 0)");
                     Log.i("SUCCESS INSERTING ID", "inserted generated user ID");
 
                 } catch(Exception e){
@@ -590,6 +593,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public boolean checkNewDaySetNumSteps(){
+
         //get current time
         String currentTimeStamp = getCurrentTimeStamp();
         String datetimeParts[] = currentTimeStamp.split(":");
