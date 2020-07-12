@@ -14,8 +14,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
@@ -52,9 +54,12 @@ import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -97,14 +102,21 @@ public class MainActivity extends AppCompatActivity
     private static int currentNumSteps = 0;
     public static int deviceDiscoverable = 0;
     private boolean grantPermission = false;
-    private String listeningForPermissionRequestsAPI = "https://samples.openweathermap.org/data/2.5/weather?q=London,uk&appid=439d4b804bc8187953eb36d2a8c26a02";
+    public static String domainName  = "http://172.17.0.1:8080/";
+    public static String listeningForPermissionRequestsAPI = domainName + "api/permissions/checkrequests/";
+    public static String grantPermissionAPIUrl = domainName + "api/permissions";
+    private int threadSleepTime = 1000; //time to sleep if there was a request, response time
+    private boolean onRequest = false; //currently on a request
+
+    private int asyncTaskTask = 0;
+//    public static String listeningForPermissionRequestsAPI = "https://samples.openweathermap.org/data/2.5/weather?q=London,uk&appid=439d4b804bc8187953eb36d2a8c26a02";
 
 
     //variables for async thread for checking requests
     private static final String TAG = "MainActivity";
     private volatile boolean stopThread = false;
     android.app.AlertDialog.Builder builder;
-    android.app.AlertDialog dialog;
+    android.app.AlertDialog permissionDialog;
 
 
     BluetoothConnectionService mBluetoothConnection;
@@ -308,6 +320,10 @@ public class MainActivity extends AppCompatActivity
         txtBodyTemp = (TextView)findViewById(R.id.txtBodyTemp);
         txtHeartRate = (TextView)findViewById(R.id.txtHeartRate);
         txtStatus = (TextView)findViewById(R.id.txtStatus);
+
+        //create builder
+        builder = new android.app.AlertDialog.Builder(this);
+        permissionDialog = builder.create(); //initialise empty dialog
 
         //start listening thread, to listen to API for any request
         startListenerThreadForRemoteAccess();
@@ -648,14 +664,19 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void run() {
                         if(deviceDiscoverable == 1) {
+                            if(onRequest == true){
+                                threadSleepTime = 10000; //give more time to sleep
+                                onRequest = false; //reset
+                            } else {
+                                threadSleepTime = 1000;
+                            }
                             listenForRequests();
                         }
-//                            dialog.show();
                     }
                 });
 
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(threadSleepTime);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -699,11 +720,21 @@ public class MainActivity extends AppCompatActivity
 
             try {
                 Log.i("DATA", s);
-                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
-//                doneLoadingToBuffers = loadDataToBuffers(s);
+                JSONObject js = new JSONObject(s);
 
-                //check if there is a request, ask for permission
-//                askForPermission("USER12909");
+//                Toast.makeText(getApplicationContext(), Integer.toString(js.length()) , Toast.LENGTH_SHORT).show();
+
+                if(!(js.length() == 0)){ //not empty response
+                    Toast.makeText(getApplicationContext(), s , Toast.LENGTH_SHORT).show();
+                    //TODO check if there is a request, grant or reject permission request
+//                    grantPermission(js.getString("0"));
+                    onRequest = true;
+                    grantPermission(js.getString("0"));
+
+                }
+
+
+
 
             } catch (Exception e) {
                 Log.i("FAILED TO GET", "FAILED TO GET JSON DATA");
@@ -715,18 +746,49 @@ public class MainActivity extends AppCompatActivity
 
     public void listenForRequests(){
         MonitorRequests checkr = new MonitorRequests();
-        String apiQuery = listeningForPermissionRequestsAPI;
+        String apiQuery = listeningForPermissionRequestsAPI + deviceID;
         checkr.execute(apiQuery);
     }
 
-    private void askForPermission(String userid){
+    private void grantPermission(final String userid){
         //create alert dialog for user permission
-        builder = new android.app.AlertDialog.Builder(this);
         builder.setTitle("Grant permission to " + userid + "?");
         builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             public void onClick(DialogInterface dialog, int id) {
                 System.out.println("Choice was positive");
                 //TODO grant permission, send response to grant permission api, send post request
+                try {
+                    URL url = new URL(grantPermissionAPIUrl);
+                    URLConnection con = url.openConnection();
+                    HttpURLConnection http = (HttpURLConnection) con;
+                    http.setRequestMethod("POST"); // PUT is another valid option
+                    http.setDoOutput(true);
+
+                    String jsonStr = "{\"permissionGranted\": " + Integer.toString(2) + "," +
+                            "\"deviceRequested\": \"" + deviceID + "\"" + "," +
+                            "\"requestingDevice\": \"" + userid + "\"" + "}";
+                    System.out.println("JSON STRING IS : " + jsonStr);
+                    byte[] out  = jsonStr.getBytes(StandardCharsets.UTF_8);
+//                       byte[] out = "{\"username\":\"root\",\"password\":\"password\"}" .getBytes(StandardCharsets.UTF_8);
+                    int length = out.length;
+
+                    http.setFixedLengthStreamingMode(length);
+                    http.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                    http.connect();
+
+                    try(OutputStream os = http.getOutputStream()) {
+                        os.write(out);
+                    }catch (Exception ex){
+                        ex.printStackTrace();
+                    }
+
+                } catch (Exception ex){
+                    System.out.print("ERROR GRANTING PERMISSION");
+                    ex.printStackTrace();
+                }
+
+
                 dialog.dismiss();
             }
         });
@@ -737,7 +799,11 @@ public class MainActivity extends AppCompatActivity
                 dialog.dismiss();
             }
         });
-        dialog = builder.create();
-        dialog.show();
+        if(permissionDialog.isShowing()){
+            ;
+        } else {
+            permissionDialog = builder.create();
+            permissionDialog.show();
+        }
     }
 }

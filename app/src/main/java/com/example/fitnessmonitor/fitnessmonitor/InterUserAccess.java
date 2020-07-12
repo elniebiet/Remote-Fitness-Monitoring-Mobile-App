@@ -11,6 +11,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.Image;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -30,6 +31,12 @@ import android.widget.Toast;
 
 import com.example.fitnessmonitor.fitnessmonitor.views.PlotView;
 
+import org.json.JSONObject;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -60,6 +67,7 @@ public class InterUserAccess extends AppCompatActivity {
     private String deviceID = "";
     private int discoverable = 0;
     private SQLiteDatabase sqLiteDatabase;
+    private String requestForPermissionRequestsAPI =  MainActivity.domainName + "api/permissions/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,14 +199,71 @@ public class InterUserAccess extends AppCompatActivity {
     }
 
     public void checkFitnessClicked(View view){
-        String suppliedId = edtSearch.getText().toString().trim();
-        suppliedId = suppliedId.toUpperCase();
-        if(suppliedId.contains("USER")){
+        String requestedId = edtSearch.getText().toString().trim();
+        requestedId = requestedId.toUpperCase();
+        if(requestedId.contains("USER")){
             //valid user id format
+            //request for permission
+            requestForPermission(requestedId, deviceID);
 
         } else {
             Toast.makeText(getApplicationContext(), "invalid User id", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public class RequestPermission extends AsyncTask<String,Void,String> {
+
+        @Override
+        protected String doInBackground(String... urls) {
+            String result = "";
+            URL url;
+            HttpURLConnection urlConnection = null;
+
+            try {
+
+                url = new URL(urls[0]);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                InputStream in = urlConnection.getInputStream();
+                InputStreamReader reader = new InputStreamReader(in);
+                int data = reader.read();
+
+                while (data != -1) {
+                    char current = (char) data;
+                    result += current;
+                    data = reader.read();
+                }
+
+                return result;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            try {
+                Log.i("DATA", s);
+                JSONObject obj = new JSONObject(s);
+                Toast.makeText(getApplicationContext(), "LENGTH OF PERMISSION STATUS OBJ: " + Integer.toString(obj.length()), Toast.LENGTH_SHORT).show();
+
+
+
+            } catch (Exception e) {
+                Log.i("FAILED TO REQUEST PERM.", "FAILED TO GET JSON DATA");
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+    private void requestForPermission(String requestedId, String requestingId){
+        RequestPermission checkr = new RequestPermission();
+        String apiQuery = requestForPermissionRequestsAPI + requestedId + "/" + requestingId;
+        checkr.execute(apiQuery);
     }
 
     public void btnDiscoverabilityClicked(View view){
