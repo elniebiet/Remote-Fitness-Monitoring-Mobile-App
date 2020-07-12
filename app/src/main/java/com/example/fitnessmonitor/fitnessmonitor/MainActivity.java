@@ -692,12 +692,15 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /* Main class to listen for monitor requests,
+    * This thread is shared: when asyncTaskTask == 0, listen for request, otherwise i.e when 1, respond to permission request
+    * */
     public class MonitorRequests extends AsyncTask<String,Void,String> {
 
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
-        protected String doInBackground(String... urls) {
-            /* This thread is shared when asyncTaskTask == 1, listen for request, otherwise i.e when 0, respond to permission request*/
+        protected String doInBackground(String... urls) { //shared doInBackground function
+
             if(asyncTaskTask == 0){
                 String result = "";
                 URL url;
@@ -755,7 +758,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         @Override
-        protected void onPostExecute(String s) {
+        protected void onPostExecute(String s) { //shared function
             super.onPostExecute(s);
             if(asyncTaskTask == 0) {
                 try {
@@ -779,7 +782,7 @@ public class MainActivity extends AppCompatActivity
                     e.printStackTrace();
                 }
             } else {
-
+                ; //do nothing, sending a post request
             }
 
         }
