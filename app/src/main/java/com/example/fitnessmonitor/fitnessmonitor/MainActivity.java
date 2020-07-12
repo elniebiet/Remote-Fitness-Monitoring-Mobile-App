@@ -52,9 +52,13 @@ import com.example.fitnessmonitor.fitnessmonitor.views.NearbyHealthCentres;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -63,6 +67,9 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -101,12 +108,13 @@ public class MainActivity extends AppCompatActivity
     private TextView txtSteps;
     private static int currentNumSteps = 0;
     public static int deviceDiscoverable = 0;
-    private boolean grantPermission = false;
     public static String domainName  = "http://172.17.0.1:8080/";
     public static String listeningForPermissionRequestsAPI = domainName + "api/permissions/checkrequests/";
     public static String grantPermissionAPIUrl = domainName + "api/permissions";
     private int threadSleepTime = 1000; //time to sleep if there was a request, response time
     private boolean onRequest = false; //currently on a request
+    private String requestingId = "";
+    private int grantPerm = 0; //0 to reject permission to a user, 2 to grant permission to a user
 
     private int asyncTaskTask = 0;
 //    public static String listeningForPermissionRequestsAPI = "https://samples.openweathermap.org/data/2.5/weather?q=London,uk&appid=439d4b804bc8187953eb36d2a8c26a02";
@@ -652,8 +660,8 @@ public class MainActivity extends AppCompatActivity
         stopThread = true;
     }
 
+    //Runnable class to listen for monitor requests
     class MonitorRequestsRunnable implements Runnable {
-        int seconds;
         MonitorRequestsRunnable() {
             ;
         }
@@ -663,12 +671,12 @@ public class MainActivity extends AppCompatActivity
                 txtStatus.post(new Runnable() {
                     @Override
                     public void run() {
-                        if(deviceDiscoverable == 1) {
+                        if(deviceDiscoverable == 1) { //only listen for requests if the device is discoverable
                             if(onRequest == true){
-                                threadSleepTime = 10000; //give more time to sleep
+                                threadSleepTime = 10000; //give more time to sleep, 10secs if a request has been sent
                                 onRequest = false; //reset
                             } else {
-                                threadSleepTime = 1000;
+                                threadSleepTime = 1000; //otherwise continue checking every second
                             }
                             listenForRequests();
                         }
@@ -676,7 +684,7 @@ public class MainActivity extends AppCompatActivity
                 });
 
                 try {
-                    Thread.sleep(threadSleepTime);
+                    Thread.sleep(threadSleepTime); //default sleep time is 1 sec.
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -686,59 +694,92 @@ public class MainActivity extends AppCompatActivity
 
     public class MonitorRequests extends AsyncTask<String,Void,String> {
 
+        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
         protected String doInBackground(String... urls) {
-            String result = "";
-            URL url;
-            HttpURLConnection urlConnection = null;
+            /* This thread is shared when asyncTaskTask == 1, listen for request, otherwise i.e when 0, respond to permission request*/
+            if(asyncTaskTask == 0){
+                String result = "";
+                URL url;
+                HttpURLConnection urlConnection = null;
 
-            try {
+                try {
 
-                url = new URL(urls[0]);
-                urlConnection = (HttpURLConnection) url.openConnection();
-                InputStream in = urlConnection.getInputStream();
-                InputStreamReader reader = new InputStreamReader(in);
-                int data = reader.read();
+                    url = new URL(urls[0]);
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    InputStream in = urlConnection.getInputStream();
+                    InputStreamReader reader = new InputStreamReader(in);
+                    int data = reader.read();
 
-                while (data != -1) {
-                    char current = (char) data;
-                    result += current;
-                    data = reader.read();
+                    while (data != -1) {
+                        char current = (char) data;
+                        result += current;
+                        data = reader.read();
+                    }
+
+                    return result;
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
                 }
+            } else {
+                try {
 
-                return result;
+                    URL url = new URL(grantPermissionAPIUrl);
+                    String jsonStr = "{\"permissionGranted\": " + Integer.toString(grantPerm) + "," +
+                            "\"deviceRequested\": \"" + deviceID + "\"" + "," +
+                            "\"requestingDevice\": \"" + requestingId + "\"" + "}";
+                    System.out.println("JSON STRING IS : " + jsonStr);
+                    byte[] postDataBytes  = jsonStr.getBytes(StandardCharsets.UTF_8);
+                    HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+                    conn.setRequestMethod("POST");
+                    conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                    conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
+                    conn.setDoOutput(true);
+                    conn.getOutputStream().write(postDataBytes);
+                    Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+                    StringBuilder sb = new StringBuilder();
+                    for (int c; (c = in.read()) >= 0;)
+                        sb.append((char)c);
+                    String response = sb.toString();
+                    System.out.println("RESPONSE IS : "+ response);
 
-            } catch (Exception e) {
-                e.printStackTrace();
+                } catch (Exception ex){
+                    System.out.print("ERROR GRANTING PERMISSION");
+                    ex.printStackTrace();
+                }
                 return null;
+
             }
         }
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-
-            try {
-                Log.i("DATA", s);
-                JSONObject js = new JSONObject(s);
+            if(asyncTaskTask == 0) {
+                try {
+                    Log.i("DATA", s);
+                    JSONObject js = new JSONObject(s);
 
 //                Toast.makeText(getApplicationContext(), Integer.toString(js.length()) , Toast.LENGTH_SHORT).show();
 
-                if(!(js.length() == 0)){ //not empty response
-                    Toast.makeText(getApplicationContext(), s , Toast.LENGTH_SHORT).show();
-                    //TODO check if there is a request, grant or reject permission request
+                    if (!(js.length() == 0)) { //not empty response
+                        Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
+                        //TODO check if there is a request, grant or reject permission request
 //                    grantPermission(js.getString("0"));
-                    onRequest = true;
-                    grantPermission(js.getString("0"));
+                        onRequest = true;
+                        grantPermission(js.getString("0"));
 
+                    }
+
+
+                } catch (Exception e) {
+                    Log.i("FAILED TO GET", "FAILED TO GET JSON DATA");
+                    e.printStackTrace();
                 }
+            } else {
 
-
-
-
-            } catch (Exception e) {
-                Log.i("FAILED TO GET", "FAILED TO GET JSON DATA");
-                e.printStackTrace();
             }
 
         }
@@ -747,6 +788,8 @@ public class MainActivity extends AppCompatActivity
     public void listenForRequests(){
         MonitorRequests checkr = new MonitorRequests();
         String apiQuery = listeningForPermissionRequestsAPI + deviceID;
+
+        asyncTaskTask = 0;
         checkr.execute(apiQuery);
     }
 
@@ -757,37 +800,11 @@ public class MainActivity extends AppCompatActivity
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             public void onClick(DialogInterface dialog, int id) {
                 System.out.println("Choice was positive");
-                //TODO grant permission, send response to grant permission api, send post request
-                try {
-                    URL url = new URL(grantPermissionAPIUrl);
-                    URLConnection con = url.openConnection();
-                    HttpURLConnection http = (HttpURLConnection) con;
-                    http.setRequestMethod("POST"); // PUT is another valid option
-                    http.setDoOutput(true);
-
-                    String jsonStr = "{\"permissionGranted\": " + Integer.toString(2) + "," +
-                            "\"deviceRequested\": \"" + deviceID + "\"" + "," +
-                            "\"requestingDevice\": \"" + userid + "\"" + "}";
-                    System.out.println("JSON STRING IS : " + jsonStr);
-                    byte[] out  = jsonStr.getBytes(StandardCharsets.UTF_8);
-//                       byte[] out = "{\"username\":\"root\",\"password\":\"password\"}" .getBytes(StandardCharsets.UTF_8);
-                    int length = out.length;
-
-                    http.setFixedLengthStreamingMode(length);
-                    http.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-                    http.connect();
-
-                    try(OutputStream os = http.getOutputStream()) {
-                        os.write(out);
-                    }catch (Exception ex){
-                        ex.printStackTrace();
-                    }
-
-                } catch (Exception ex){
-                    System.out.print("ERROR GRANTING PERMISSION");
-                    ex.printStackTrace();
-                }
-
+                grantPerm = 2;
+                requestingId = userid;
+                MonitorRequests checkr = new MonitorRequests();
+                asyncTaskTask = 1;
+                checkr.execute();
 
                 dialog.dismiss();
             }
@@ -795,7 +812,11 @@ public class MainActivity extends AppCompatActivity
         builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 System.out.println("Choice was negative");
-                //TODO refuse permission, send response to grant permission api, send post request
+                grantPerm = 0;
+                requestingId = userid;
+                MonitorRequests checkr = new MonitorRequests();
+                asyncTaskTask = 1;
+                checkr.execute();
                 dialog.dismiss();
             }
         });
