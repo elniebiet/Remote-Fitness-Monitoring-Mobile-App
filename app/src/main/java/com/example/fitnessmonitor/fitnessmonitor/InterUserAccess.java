@@ -205,6 +205,7 @@ public class InterUserAccess extends AppCompatActivity {
         //check discoverabiltiy
         if(discoverable == 0) {
             discoverable = 1; //toggle disvoverability
+            MainActivity.deviceDiscoverable = 1; //toggle discoverability in MainActivity
             btnDiscoverability.setText("DISABLE DISCOVERABILITY");
             //update database
             try {
@@ -219,6 +220,7 @@ public class InterUserAccess extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Device is now visible", Toast.LENGTH_SHORT).show();
         } else {
             discoverable = 0; //toggle disvoverability
+            MainActivity.deviceDiscoverable = 0; //toggle discoverability in MainActivity
             btnDiscoverability.setText("ENABLE DISCOVERABILITY");
             //update database
             try {

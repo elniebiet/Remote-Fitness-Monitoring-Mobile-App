@@ -15,6 +15,7 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
@@ -95,6 +96,16 @@ public class MainActivity extends AppCompatActivity
     private TextView txtSteps;
     private static int currentNumSteps = 0;
     public static int deviceDiscoverable = 0;
+    private boolean grantPermission = false;
+    private String listeningForPermissionRequestsAPI = "https://samples.openweathermap.org/data/2.5/weather?q=London,uk&appid=439d4b804bc8187953eb36d2a8c26a02";
+
+
+    //variables for async thread for checking requests
+    private static final String TAG = "MainActivity";
+    private volatile boolean stopThread = false;
+    android.app.AlertDialog.Builder builder;
+    android.app.AlertDialog dialog;
+
 
     BluetoothConnectionService mBluetoothConnection;
     private static final UUID MY_UUID_INSECURE =
@@ -170,12 +181,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-//        NearbyHealthFacilities checkr = new NearbyHealthFacilities();
-//        String myLocationLong = "-1.2071265745908022";
-//        String myLocationLat = "52.92445854283869";
-//        https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=52.92445854283869,-1.2071265745908022&radius=100000&type=health&keyword=hospital%20health%20centre%20clinic%20nhs&key=AIzaSyADjGr1P8uXe4bCeSq51nbLaIHsYLyiQ1I
-//        checkr.execute();
-
         /*create database*/
         try {
             sqLiteDatabase = this.openOrCreateDatabase("FitnessMonitorDB", MODE_PRIVATE, null);
@@ -190,7 +195,7 @@ public class MainActivity extends AppCompatActivity
             dbcreated = false;
         }
 
-        //check if device ID is assigned to device else create one
+        //check if device ID is assigned to device else create one, also get discoverability here
         if(dbcreated){
             Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM tblDeviceID", null);
             int idIndex = cursor.getColumnIndex("deviceID");
@@ -219,6 +224,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }
+
 
         //check for user email if account added
         try {
@@ -303,6 +309,10 @@ public class MainActivity extends AppCompatActivity
         txtHeartRate = (TextView)findViewById(R.id.txtHeartRate);
         txtStatus = (TextView)findViewById(R.id.txtStatus);
 
+        //start listening thread, to listen to API for any request
+        startListenerThreadForRemoteAccess();
+
+
         View header = navigationView.getHeaderView(0);
         txtUserEmail = (TextView) header.findViewById(R.id.txtUserEmail);
 
@@ -354,7 +364,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-//    @SuppressWarnings("StatementWithEmptyBody")
+    //    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -615,64 +625,119 @@ public class MainActivity extends AppCompatActivity
         return currentNumSteps;
     }
 
+    //start listener thread
+    private void startListenerThreadForRemoteAccess() {
+        stopThread = false;
+        MonitorRequestsRunnable runnable = new MonitorRequestsRunnable();
+        new Thread(runnable).start();
+    }
+    //stop listener thread
+    public void stopThread() {
+        stopThread = true;
+    }
 
-//    //MAPS API Class
-//    public class NearbyHealthFacilities extends AsyncTask<String,Void,String> {
-//
-//        @Override
-//        protected String doInBackground(String... urls) {
-//            String result = "";
-//            URL url;
-//            HttpURLConnection urlConnection = null;
-//
-//            try {
-//
-//                url = new URL(urls[0]);
-//                urlConnection = (HttpURLConnection) url.openConnection();
-//                InputStream in = urlConnection.getInputStream();
-//                InputStreamReader reader = new InputStreamReader(in);
-//                int data = reader.read();
-//
-//                while (data != -1) {
-//                    char current = (char) data;
-//                    result += current;
-//                    data = reader.read();
-//                }
-//
-//                return result;
-//
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                return null;
-//            }
-//        }
-//
-//        @Override
-//        protected void onPostExecute(String s) {
-//            super.onPostExecute(s);
-//
-//            try {
-//                Log.i("DATA", s);
-////                JSONObject jsonObject = new JSONObject(s);
-////                String weatherInfo = jsonObject.getString("weather");
-//
-////                Log.i("Weather content", weatherInfo);
-//
-////                JSONArray arr = new JSONArray(weatherInfo);
-////
-////                for (int i=0; i < arr.length(); i++) {
-////                    JSONObject jsonPart = arr.getJSONObject(i);
-////
-////                    Log.i("main",jsonPart.getString("main"));
-////                    Log.i("description",jsonPart.getString("description"));
-////                }
-//
-//            } catch (Exception e) {
-//                Log.i("FAILED TO GET", "FAILED TO GET JSON DATA");
-//                e.printStackTrace();
-//            }
-//
-//        }
-//    }
+    class MonitorRequestsRunnable implements Runnable {
+        int seconds;
+        MonitorRequestsRunnable() {
+            ;
+        }
+        @Override
+        public void run() {
+            while(true){
+                txtStatus.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(deviceDiscoverable == 1) {
+                            listenForRequests();
+                        }
+//                            dialog.show();
+                    }
+                });
 
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public class MonitorRequests extends AsyncTask<String,Void,String> {
+
+        @Override
+        protected String doInBackground(String... urls) {
+            String result = "";
+            URL url;
+            HttpURLConnection urlConnection = null;
+
+            try {
+
+                url = new URL(urls[0]);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                InputStream in = urlConnection.getInputStream();
+                InputStreamReader reader = new InputStreamReader(in);
+                int data = reader.read();
+
+                while (data != -1) {
+                    char current = (char) data;
+                    result += current;
+                    data = reader.read();
+                }
+
+                return result;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            try {
+                Log.i("DATA", s);
+                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
+//                doneLoadingToBuffers = loadDataToBuffers(s);
+
+                //check if there is a request, ask for permission
+//                askForPermission("USER12909");
+
+            } catch (Exception e) {
+                Log.i("FAILED TO GET", "FAILED TO GET JSON DATA");
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+    public void listenForRequests(){
+        MonitorRequests checkr = new MonitorRequests();
+        String apiQuery = listeningForPermissionRequestsAPI;
+        checkr.execute(apiQuery);
+    }
+
+    private void askForPermission(String userid){
+        //create alert dialog for user permission
+        builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("Grant permission to " + userid + "?");
+        builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                System.out.println("Choice was positive");
+                //TODO grant permission, send response to grant permission api, send post request
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                System.out.println("Choice was negative");
+                //TODO refuse permission, send response to grant permission api, send post request
+                dialog.dismiss();
+            }
+        });
+        dialog = builder.create();
+        dialog.show();
+    }
 }
