@@ -80,7 +80,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="30dp"
-                android:text="78 BPM"
+                android:text="0"
                 android:textSize="20sp" />
         </FrameLayout>
 
@@ -105,7 +105,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="30dp"
-                android:text="30 ' C"
+                android:text="0"
                 android:textSize="20sp" />
         </FrameLayout>
 
@@ -156,7 +156,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="30dp"
-                android:text="0.00 km"
+                android:text="0"
                 android:textSize="25sp" />
         </FrameLayout>
 
@@ -180,7 +180,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="30dp"
-                android:text="0 kcal"
+                android:text="0"
                 android:textSize="25sp" />
 
         </FrameLayout>
@@ -208,7 +208,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="30dp"
-                android:text="1000 / 5000"
+                android:text="0"
                 android:textSize="25sp" />
         </FrameLayout>
 

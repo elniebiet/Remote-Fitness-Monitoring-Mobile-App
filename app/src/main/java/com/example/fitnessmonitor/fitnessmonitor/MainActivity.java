@@ -817,18 +817,14 @@ public class MainActivity extends AppCompatActivity
         protected void onPostExecute(String s) { //shared function
             super.onPostExecute(s);
             if(asyncTaskTask == 0) {
-                if(listenSend == 1) {
+                if(listenSend == 1) { //after executing listen request, listenSend status is 1
                     if(s != null) {
                         try {
                             Log.i("DATA IS ", s);
                             JSONObject js = new JSONObject(s);
 
-//                Toast.makeText(getApplicationContext(), Integer.toString(js.length()) , Toast.LENGTH_SHORT).show();
-
                             if (!(js.length() == 0)) { //not empty response
-                                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
-                                //TODO check if there is a request, grant or reject permission request
-//                    grantPermission(js.getString("0"));
+//                                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
                                 onRequest = true;
                                 grantPermission(js.getString("0"));
 

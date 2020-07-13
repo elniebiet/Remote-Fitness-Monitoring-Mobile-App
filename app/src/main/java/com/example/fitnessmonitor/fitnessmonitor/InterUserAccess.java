@@ -1,5 +1,6 @@
 package com.example.fitnessmonitor.fitnessmonitor;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -35,6 +36,7 @@ import android.widget.Toast;
 import com.example.fitnessmonitor.fitnessmonitor.views.PlotView;
 
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -47,13 +49,8 @@ import java.util.Map;
 
 public class InterUserAccess extends AppCompatActivity {
 
-    private TextView txtStepsToday;
-    private TextView txtDistance;
-    private TextView txtCalories;
-
-    private int currentNumberOfSteps = 0;
-    private int currentDistanceCovered = 0;
-    private int currentCaloriesBurnt = 0;
+    private int distanceCovered = 0;
+    private int caloriesBurnt = 0;
 
     private int userWeight = 70; //70kg as default weight
     private int userHeight = 170; //170cm as default height in cm
@@ -65,13 +62,23 @@ public class InterUserAccess extends AppCompatActivity {
     private FrameLayout frmDailySteps;
     private FrameLayout frmDistanceCovered;
     private FrameLayout frmCalories;
+    private TextView txtBodyTemp;
+    private TextView txtHeartRate;
+    private TextView txtStepsToday;
+    private TextView txtDistance;
+    private TextView txtCalories;
+
     private EditText edtSearch;
     private Button btnDiscoverability;
+    private Button btnSearch;
     private String deviceID = "";
+    private String requestedId = "";
     private int discoverable = 0;
     private SQLiteDatabase sqLiteDatabase;
     private String requestForPermissionRequestsAPI =  MainActivity.domainName + "api/permissions/";
-    private String getFitnessDataAPI = MainActivity.domainName + "api/fitnessupdate";
+    private String getFitnessDataAPI = MainActivity.domainName + "api/fitnessupdate/getupdate/";
+    private int asyncTaskTask = 0; //to share the AsyncTask thread for requesting permission and getting update from API
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,6 +173,12 @@ public class InterUserAccess extends AppCompatActivity {
         setMargins(frmCalories, 0,frmCaloriesMarginTop,0,0);
         frmCalories.setLayoutParams(frmCaloriesLayoutParams);
 
+        txtBodyTemp = (TextView) findViewById(R.id.txtBodyTemp);
+        txtHeartRate = (TextView) findViewById(R.id.txtHeartRate);
+        txtStepsToday = (TextView) findViewById(R.id.txtStepsToday);
+        txtDistance = (TextView) findViewById(R.id.txtDistance);
+        txtCalories = (TextView) findViewById(R.id.txtCalories);
+
         frmBodyTemp.setVisibility(View.INVISIBLE);
         frmHeartRate.setVisibility(View.INVISIBLE);
         frmDailySteps.setVisibility(View.INVISIBLE);
@@ -174,6 +187,7 @@ public class InterUserAccess extends AppCompatActivity {
 
         edtSearch = (EditText) findViewById(R.id.edtSearch);
         btnDiscoverability = (Button) findViewById(R.id.btnDiscoverability);
+        btnSearch = (Button) findViewById(R.id.btnSearch);
         //Check initial state of discoverability
         if(discoverable == 1){
             //device discoverable
@@ -181,10 +195,6 @@ public class InterUserAccess extends AppCompatActivity {
         } else {
             btnDiscoverability.setText("ENABLE DISCOVERABILITY");
         }
-
-        //calculate distance covered and calories burnt
-//        currentDistanceCovered = (int)(userHeight / 100 * 0.45 * currentNumberOfSteps); //in meters
-//        currentCaloriesBurnt = (int) (userWeight * currentDistanceCovered * 1.036); //in calories
 
 
 
@@ -203,82 +213,173 @@ public class InterUserAccess extends AppCompatActivity {
     }
 
     public void checkFitnessClicked(View view){
-        String requestedId = edtSearch.getText().toString().trim();
+        btnSearch.setText("CHECK FITNESS");
+
+        frmBodyTemp.setVisibility(View.INVISIBLE);
+        frmHeartRate.setVisibility(View.INVISIBLE);
+        frmDailySteps.setVisibility(View.INVISIBLE);
+        frmDistanceCovered.setVisibility(View.INVISIBLE);
+        frmCalories.setVisibility(View.INVISIBLE);
+
+        requestedId = edtSearch.getText().toString().trim();
         requestedId = requestedId.toUpperCase();
         if(requestedId.contains("USER")){
             //valid user id format
             //request for permission
             requestForPermission(requestedId, deviceID);
+            Toast.makeText(getApplicationContext(), "Requesting permission ...", Toast.LENGTH_SHORT).show();
 
         } else {
-            Toast.makeText(getApplicationContext(), "invalid User id", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Invalid User ID", Toast.LENGTH_SHORT).show();
         }
     }
 
+    /*Shared Asynctask thread for requesting permission and getting update, determined using var : asyncTaskTask*/
     public class RequestPermission extends AsyncTask<String,Void,String> {
 
         @Override
         protected String doInBackground(String... urls) {
-            String result = "";
-            URL url;
-            HttpURLConnection urlConnection = null;
+            if(asyncTaskTask == 0) { //SEND PERMISSION REQUEST TO API
+                String result = "";
+                URL url;
+                HttpURLConnection urlConnection = null;
 
-            try {
+                try {
 
-                url = new URL(urls[0]);
-                urlConnection = (HttpURLConnection) url.openConnection();
-                InputStream in = urlConnection.getInputStream();
-                InputStreamReader reader = new InputStreamReader(in);
-                int data = reader.read();
+                    url = new URL(urls[0]);
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    InputStream in = urlConnection.getInputStream();
+                    InputStreamReader reader = new InputStreamReader(in);
+                    int data = reader.read();
 
-                while (data != -1) {
-                    char current = (char) data;
-                    result += current;
-                    data = reader.read();
+                    while (data != -1) {
+                        char current = (char) data;
+                        result += current;
+                        data = reader.read();
+                    }
+
+                    return result;
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
                 }
+            } else if(asyncTaskTask == 1) { //FETCH FITNESS UPDATE FROM API
+                System.out.println("LISTENSEND IS 0");
+                String result = "";
+                URL url;
+                HttpURLConnection urlConnection = null;
 
-                return result;
+                try {
 
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
+                    url = new URL(urls[0]);
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    InputStream in = urlConnection.getInputStream();
+                    InputStreamReader reader = new InputStreamReader(in);
+                    int data = reader.read();
+
+                    while (data != -1) {
+                        char current = (char) data;
+                        result += current;
+                        data = reader.read();
+                    }
+
+                    return result;
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
             }
+            return null;
         }
 
+        /*Share asyncthread response*/
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-
-            try {
-                Log.i("DATA", s);
-                JSONObject obj = new JSONObject(s);
-                int resp = obj.getInt("permissionStatus");
+            if(asyncTaskTask == 0) {
+                try {
+                    Log.i("DATA", s);
+                    JSONObject obj = new JSONObject(s);
+                    int resp = obj.getInt("permissionStatus");
 //                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
 
-                if(resp == 2){ //permission granted
-                    Toast.makeText(getApplicationContext(), "Permission granted", Toast.LENGTH_SHORT).show();
-                    //TODO: start getting data from API
+                    if (resp == 2) { //permission granted
+                        Toast.makeText(getApplicationContext(), "Permission granted, requesting update ...", Toast.LENGTH_SHORT).show();
+                        checkForFitnessUpdate();
 
 
-                } else { //permission not granted
-                    //messagebox, failed to get permission
-                    Toast.makeText(getApplicationContext(), "Failed to get permission", Toast.LENGTH_SHORT).show();
-                    ; //do nothing
+                    } else { //permission not granted
+                        //messagebox, failed to get permission
+                        Toast.makeText(getApplicationContext(), "Failed to get permission", Toast.LENGTH_SHORT).show();
+                        ; //do nothing
+                    }
+
+                } catch (Exception e) {
+                    Toast.makeText(getApplicationContext(), "Failed to get permission...", Toast.LENGTH_SHORT).show();
+                    Log.i("FAILED TO REQUEST PERM.", "Failed to get permission...");
+                    e.printStackTrace();
                 }
+            } else if(asyncTaskTask == 1){
+                try {
+                    Log.i("DATA", s);
+                    JSONObject obj = new JSONObject(s);
 
-            } catch (Exception e) {
-                Toast.makeText(getApplicationContext(), "Failed to get permission...", Toast.LENGTH_SHORT).show();
-                Log.i("FAILED TO REQUEST PERM.", "Failed to get permission...");
-                e.printStackTrace();
+//                    Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
+                    int bodyTemp = 0, heartRate = 0, numOfSteps = 0;
+                    try {
+
+                        bodyTemp = obj.getInt("bodyTemp");
+                        heartRate = obj.getInt("heartRate");
+                        numOfSteps = obj.getInt("numOfSteps");
+
+                        distanceCovered = (int)(userHeight / 100 * 0.45 * numOfSteps); //in meters
+                        caloriesBurnt = (int) (userWeight * distanceCovered * 1.036); //in calories
+
+                        txtBodyTemp.setText(Integer.toString(bodyTemp) + " 'C");
+                        txtHeartRate.setText(Integer.toString(heartRate) + " BPM");
+                        txtStepsToday.setText(Integer.toString(numOfSteps) + "/5000");
+                        txtDistance.setText(Integer.toString(distanceCovered) + " km");
+                        txtCalories.setText(Integer.toString(caloriesBurnt) + " kcal");
+                        btnSearch.setText("REFRESH");
+                        frmBodyTemp.setVisibility(View.VISIBLE);
+                        frmHeartRate.setVisibility(View.VISIBLE);
+                        frmDailySteps.setVisibility(View.VISIBLE);
+                        frmDistanceCovered.setVisibility(View.VISIBLE);
+                        frmCalories.setVisibility(View.VISIBLE);
+
+
+                    } catch(Exception ex){
+                        ex.printStackTrace();
+                    }
+
+
+                } catch (Exception e) {
+                    Toast.makeText(getApplicationContext(), "Failed to fetch fitness update...", Toast.LENGTH_SHORT).show();
+                    Log.i("FAILED TO FETCH UPDATE.", "Failed to fetch fitness update...");
+                    e.printStackTrace();
+                }
             }
 
         }
     }
 
+
+    public void checkForFitnessUpdate(){
+        RequestPermission getFitnessUpdate = new RequestPermission();
+        String apiQuery = getFitnessDataAPI + requestedId;
+
+        asyncTaskTask = 1;
+        getFitnessUpdate.execute(apiQuery);
+    }
+
+    /*Send request for permission to API*/
     private void requestForPermission(String requestedId, String requestingId){
         RequestPermission checkr = new RequestPermission();
         String apiQuery = requestForPermissionRequestsAPI + requestedId + "/" + requestingId;
         System.out.println(apiQuery);
+        asyncTaskTask = 0;
         checkr.execute(apiQuery);
     }
 
