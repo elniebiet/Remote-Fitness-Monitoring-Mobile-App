@@ -310,17 +310,17 @@ public class MainActivity extends AppCompatActivity
         int activeCellHeight = (int)(0.13 * height);
         FrameLayout flActive = (FrameLayout) findViewById(R.id.frmActive);
         ViewGroup.LayoutParams flActiveLayoutParams = flActive.getLayoutParams();
-        flActiveLayoutParams.height = activeCellHeight;//(int)(grdMainHeight * 0.9);
+        flActiveLayoutParams.height = (int)(0.9 * activeCellHeight);//(int)(grdMainHeight * 0.9);
         flActive.setLayoutParams(flActiveLayoutParams);
         //set exercise cell height
         FrameLayout flExercise = (FrameLayout) findViewById(R.id.frmExercise);
         ViewGroup.LayoutParams flExerciseLayoutParams = flExercise.getLayoutParams();
-        flExerciseLayoutParams.height = activeCellHeight;//(int)(grdMainHeight * 0.9);
+        flExerciseLayoutParams.height = (int)(0.9 * activeCellHeight);//(int)(grdMainHeight * 0.9);
         flExercise.setLayoutParams(flExerciseLayoutParams);
         //set sleep cell height
         FrameLayout flSleep = (FrameLayout) findViewById(R.id.frmSleep);
         ViewGroup.LayoutParams flSleepLayoutParams = flSleep.getLayoutParams();
-        flSleepLayoutParams.height = activeCellHeight;//(int)(grdMainHeight * 0.9);
+        flSleepLayoutParams.height = (int)(0.99 * activeCellHeight);//(int)(grdMainHeight * 0.9);
         flSleep.setLayoutParams(flSleepLayoutParams);
 
         imgSteps = (ImageView) findViewById(R.id.imgSteps);
