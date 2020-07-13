@@ -1,6 +1,8 @@
 package com.example.fitnessmonitor.fitnessmonitor;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -12,6 +14,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.Image;
 import android.os.AsyncTask;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -248,12 +251,21 @@ public class InterUserAccess extends AppCompatActivity {
             try {
                 Log.i("DATA", s);
                 JSONObject obj = new JSONObject(s);
-                Toast.makeText(getApplicationContext(), "LENGTH OF PERMISSION STATUS OBJ: " + Integer.toString(obj.length()), Toast.LENGTH_SHORT).show();
+                int resp = obj.getInt("permissionStatus");
+//                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
 
+                if(resp == 2){ //permission granted
+                    Toast.makeText(getApplicationContext(), "Permission granted", Toast.LENGTH_SHORT).show();
+                    //TODO: start getting data from API
+                } else { //permission not granted
+                    //messagebox, failed to get permission
+                    Toast.makeText(getApplicationContext(), "Failed to get permission", Toast.LENGTH_SHORT).show();
 
+                }
 
             } catch (Exception e) {
-                Log.i("FAILED TO REQUEST PERM.", "FAILED TO GET JSON DATA");
+                Toast.makeText(getApplicationContext(), "Failed to get permission...", Toast.LENGTH_SHORT).show();
+                Log.i("FAILED TO REQUEST PERM.", "Failed to get permission...");
                 e.printStackTrace();
             }
 
@@ -263,6 +275,7 @@ public class InterUserAccess extends AppCompatActivity {
     private void requestForPermission(String requestedId, String requestingId){
         RequestPermission checkr = new RequestPermission();
         String apiQuery = requestForPermissionRequestsAPI + requestedId + "/" + requestingId;
+        System.out.println(apiQuery);
         checkr.execute(apiQuery);
     }
 
