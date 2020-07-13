@@ -71,6 +71,7 @@ public class InterUserAccess extends AppCompatActivity {
     private int discoverable = 0;
     private SQLiteDatabase sqLiteDatabase;
     private String requestForPermissionRequestsAPI =  MainActivity.domainName + "api/permissions/";
+    private String getFitnessDataAPI = MainActivity.domainName + "api/fitnessupdate";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -257,10 +258,12 @@ public class InterUserAccess extends AppCompatActivity {
                 if(resp == 2){ //permission granted
                     Toast.makeText(getApplicationContext(), "Permission granted", Toast.LENGTH_SHORT).show();
                     //TODO: start getting data from API
+
+
                 } else { //permission not granted
                     //messagebox, failed to get permission
                     Toast.makeText(getApplicationContext(), "Failed to get permission", Toast.LENGTH_SHORT).show();
-
+                    ; //do nothing
                 }
 
             } catch (Exception e) {

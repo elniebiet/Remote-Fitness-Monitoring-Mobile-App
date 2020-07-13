@@ -96,6 +96,9 @@ public class MainActivity extends AppCompatActivity
     private TextView txtBodyTemp;
     private TextView txtHeartRate;
     private TextView txtStatus;
+    private int currBodyTemp = 0;
+    private int currHeartRate = 0;
+    private int currNumSteps = 0;
     private int latestNumSteps = 0;
     private int latestHeartRate = 0;
     private int latestBodyTemp = 0;
@@ -111,12 +114,14 @@ public class MainActivity extends AppCompatActivity
     public static String domainName  = "http://172.17.0.1:8080/";
     public static String listeningForPermissionRequestsAPI = domainName + "api/permissions/checkrequests/";
     public static String grantPermissionAPIUrl = domainName + "api/permissions";
+    public static String updateFitnessAPIUrl = domainName + "api/fitnessupdate";
     private int threadSleepTime = 1000; //time to sleep if there was a request, response time
     private boolean onRequest = false; //currently on a request
     private String requestingId = "";
     private int grantPerm = 0; //0 to reject permission to a user, 2 to grant permission to a user
 
     private int asyncTaskTask = 0;
+    private int listenSend = 0; //toggle between listening for request and semding data to API each time
 //    public static String listeningForPermissionRequestsAPI = "https://samples.openweathermap.org/data/2.5/weather?q=London,uk&appid=439d4b804bc8187953eb36d2a8c26a02";
 
 
@@ -532,6 +537,14 @@ public class MainActivity extends AppCompatActivity
                 } catch (Exception ex){
                     Log.i("COLOR SETTING: ", "error "+ex.getMessage());
                 }
+                //set current variables
+                currBodyTemp = (temp == "" || isNumeric(temp) == false) ? 0 : Integer.parseInt(temp);
+                currHeartRate = (hRate == "" || isNumeric(hRate) == false) ? 0 : Integer.parseInt(hRate);
+                currNumSteps = (numSteps == "" || isNumeric(numSteps) == false) ? 0 : Integer.parseInt(numSteps);
+
+                temp = Integer.toString(currBodyTemp);
+                hRate = Integer.toString(currHeartRate);
+                numSteps = Integer.toString(currNumSteps);
                 //write to database
                 try {
                     String query = "INSERT INTO tblReadings (bodyTemp, heartRate, numOfSteps, timeRecorded) VALUES (" + temp + ", " + hRate + ", " + numSteps + ", '"+ currentTS + "')";
@@ -678,7 +691,12 @@ public class MainActivity extends AppCompatActivity
                             } else {
                                 threadSleepTime = 1000; //otherwise continue checking every second
                             }
-                            listenForRequests();
+                            if(listenSend == 0) {
+                                listenForRequests();
+                            }
+                            if(listenSend == 1) {
+                                sendFitnessUpdate();
+                            }
                         }
                     }
                 });
@@ -702,31 +720,68 @@ public class MainActivity extends AppCompatActivity
         protected String doInBackground(String... urls) { //shared doInBackground function
 
             if(asyncTaskTask == 0){
-                String result = "";
-                URL url;
-                HttpURLConnection urlConnection = null;
+                if(listenSend == 0) { //LISTEN FOR ANY AVAILABLE REQUESTS
+                    System.out.println("LISTENSEND IS 0");
+                    listenSend = 1;
+                    String result = "";
+                    URL url;
+                    HttpURLConnection urlConnection = null;
 
-                try {
+                    try {
 
-                    url = new URL(urls[0]);
-                    urlConnection = (HttpURLConnection) url.openConnection();
-                    InputStream in = urlConnection.getInputStream();
-                    InputStreamReader reader = new InputStreamReader(in);
-                    int data = reader.read();
+                        url = new URL(urls[0]);
+                        urlConnection = (HttpURLConnection) url.openConnection();
+                        InputStream in = urlConnection.getInputStream();
+                        InputStreamReader reader = new InputStreamReader(in);
+                        int data = reader.read();
 
-                    while (data != -1) {
-                        char current = (char) data;
-                        result += current;
-                        data = reader.read();
+                        while (data != -1) {
+                            char current = (char) data;
+                            result += current;
+                            data = reader.read();
+                        }
+
+                        return result;
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return null;
                     }
+                } else if(listenSend == 1){ //SEND UPDATE TO FITNESS API
 
-                    return result;
+                    System.out.println("LISTENSEND IS 1");
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return null;
+                    listenSend = 0;
+                    try {
+
+                        URL url = new URL(updateFitnessAPIUrl);
+                        System.out.println("UPDATE URL IS + "+ updateFitnessAPIUrl);
+                        String jsonStr = "{\"userId\": \"" + deviceID + "\"," +
+                                "\"bodyTemp\": " + currBodyTemp + "," +
+                                "\"heartRate\": " + currHeartRate + "," +
+                                "\"numberOfSteps\": " + currNumSteps + "}";
+
+                        System.out.println("JSON STRING IS : " + jsonStr);
+                        byte[] postDataBytes  = jsonStr.getBytes(StandardCharsets.UTF_8);
+                        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+                        conn.setRequestMethod("POST");
+                        conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                        conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
+                        conn.setDoOutput(true);
+                        conn.getOutputStream().write(postDataBytes);
+                        Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+                        StringBuilder sb = new StringBuilder();
+                        for (int c; (c = in.read()) >= 0;)
+                            sb.append((char)c);
+                        String response = sb.toString();
+                        System.out.println("RESPONSE IS : "+ response);
+
+                    } catch (Exception ex){
+                        System.out.print("ERROR UPDATING DATA");
+                        ex.printStackTrace();
+                    }
                 }
-            } else {
+            } else { //RESPOND TO REQUEST
                 try {
 
                     URL url = new URL(grantPermissionAPIUrl);
@@ -755,31 +810,36 @@ public class MainActivity extends AppCompatActivity
                 return null;
 
             }
+            return null;
         }
 
         @Override
         protected void onPostExecute(String s) { //shared function
             super.onPostExecute(s);
             if(asyncTaskTask == 0) {
-                try {
-                    Log.i("DATA", s);
-                    JSONObject js = new JSONObject(s);
+                if(listenSend == 1) {
+                    if(s != null) {
+                        try {
+                            Log.i("DATA IS ", s);
+                            JSONObject js = new JSONObject(s);
 
 //                Toast.makeText(getApplicationContext(), Integer.toString(js.length()) , Toast.LENGTH_SHORT).show();
 
-                    if (!(js.length() == 0)) { //not empty response
-                        Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
-                        //TODO check if there is a request, grant or reject permission request
+                            if (!(js.length() == 0)) { //not empty response
+                                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
+                                //TODO check if there is a request, grant or reject permission request
 //                    grantPermission(js.getString("0"));
-                        onRequest = true;
-                        grantPermission(js.getString("0"));
+                                onRequest = true;
+                                grantPermission(js.getString("0"));
 
+                            }
+
+
+                        } catch (Exception e) {
+                            Log.i("FAILED TO GET", "FAILED TO GET JSON DATA");
+                            e.printStackTrace();
+                        }
                     }
-
-
-                } catch (Exception e) {
-                    Log.i("FAILED TO GET", "FAILED TO GET JSON DATA");
-                    e.printStackTrace();
                 }
             } else {
                 ; //do nothing, sending a post request
@@ -796,6 +856,11 @@ public class MainActivity extends AppCompatActivity
         checkr.execute(apiQuery);
     }
 
+    public void sendFitnessUpdate(){
+        MonitorRequests checkr = new MonitorRequests();
+        asyncTaskTask = 0;
+        checkr.execute();
+    }
     private void grantPermission(final String userid){
         //create alert dialog for user permission
         builder.setTitle("Grant permission to " + userid + "?");
@@ -829,5 +894,22 @@ public class MainActivity extends AppCompatActivity
             permissionDialog = builder.create();
             permissionDialog.show();
         }
+    }
+
+    public static boolean isNumeric(final String str) {
+
+        // null or empty
+        if (str == null || str.length() == 0) {
+            return false;
+        }
+
+        for (char c : str.toCharArray()) {
+            if (!Character.isDigit(c)) {
+                return false;
+            }
+        }
+
+        return true;
+
     }
 }
