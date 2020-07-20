@@ -1,5 +1,6 @@
 package com.example.fitnessmonitor.fitnessmonitor;
 
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Point;
@@ -40,7 +41,7 @@ public class SleepActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sleep);
-
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         //get current screen dimensions
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();

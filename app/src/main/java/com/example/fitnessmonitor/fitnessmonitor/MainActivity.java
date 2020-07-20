@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -74,6 +75,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+import static android.support.v4.content.ContextCompat.startActivity;
 import static android.widget.FrameLayout.*;
 
 public class MainActivity extends AppCompatActivity
@@ -95,7 +97,10 @@ public class MainActivity extends AppCompatActivity
     private Boolean dbcreated = false;
     private TextView txtBodyTemp;
     private TextView txtHeartRate;
-    private TextView txtStatus;
+    private TextView lblHeartRate;
+    private TextView txtActiveTime;
+//    private TextView txtStatus;
+    private ImageView imgStatus;
     private int currBodyTemp = 0;
     private int currHeartRate = 0;
     private int currNumSteps = 0;
@@ -109,6 +114,7 @@ public class MainActivity extends AppCompatActivity
     private String todayDay = "";
     private ImageView imgSteps;
     private TextView txtSteps;
+    private EditText txtRecom;
     private static int currentNumSteps = 0;
     public static int deviceDiscoverable = 0;
     public static String domainName  = "http://172.17.0.1:8080/";
@@ -123,7 +129,7 @@ public class MainActivity extends AppCompatActivity
     private int asyncTaskTask = 0;
     private int listenSend = 0; //toggle between listening for request and semding data to API each time
 //    public static String listeningForPermissionRequestsAPI = "https://samples.openweathermap.org/data/2.5/weather?q=London,uk&appid=439d4b804bc8187953eb36d2a8c26a02";
-
+    private static Context mainActivityContext = null;
 
     //variables for async thread for checking requests
     private static final String TAG = "MainActivity";
@@ -205,6 +211,8 @@ public class MainActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        mainActivityContext = this.getApplicationContext();
 
         /*create database*/
         try {
@@ -279,7 +287,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        EditText txtRecom = (EditText) findViewById(R.id.txtRecom);
+        txtRecom = (EditText) findViewById(R.id.txtRecom);
         txtRecom.setKeyListener(null);
 
         //get current screen dimensions
@@ -332,7 +340,10 @@ public class MainActivity extends AppCompatActivity
         //other UI elements
         txtBodyTemp = (TextView)findViewById(R.id.txtBodyTemp);
         txtHeartRate = (TextView)findViewById(R.id.txtHeartRate);
-        txtStatus = (TextView)findViewById(R.id.txtStatus);
+        lblHeartRate = (TextView)findViewById(R.id.lblHeartRate);
+//        txtStatus = (TextView)findViewById(R.id.txtStatus);
+        imgStatus = (ImageView) findViewById(R.id.imgStatus);
+        txtActiveTime = (TextView) findViewById(R.id.txtActiveTime);
 
         //create builder
         builder = new android.app.AlertDialog.Builder(this);
@@ -545,6 +556,30 @@ public class MainActivity extends AppCompatActivity
                 temp = Integer.toString(currBodyTemp);
                 hRate = Integer.toString(currHeartRate);
                 numSteps = Integer.toString(currNumSteps);
+
+                //set recommendation
+                if(currNumSteps < 1000){
+                    imgStatus.setImageResource(R.drawable.starr1);
+                    txtRecom.setText("Fitness level is low today: More exercise needed to reach your daily limit");
+                } else if(currNumSteps >= 1000 && currNumSteps < 2000){
+                    imgStatus.setImageResource(R.drawable.starr2);
+                    txtRecom.setText("Fitness level is low today: More exercise needed to reach your daily limit");
+                } else if(currNumSteps >= 2000 && currNumSteps < 3000){
+                    imgStatus.setImageResource(R.drawable.starr3);
+                    txtRecom.setText("Fitness level is avarage today: More exercise needed to reach your daily limit");
+                } else if(currNumSteps >= 3000 && currNumSteps < 4000){
+                    imgStatus.setImageResource(R.drawable.starr4);
+                    txtRecom.setText("Fitness level is high today: you can still reach your daily limit");
+                } else if(currNumSteps >= 4000){
+                    imgStatus.setImageResource(R.drawable.starr5);
+                    txtRecom.setText("Fitness level is high today: You have reached your daily limit");
+                }
+
+                //set active time
+
+                String activeTime = Integer.toString((int)((double)currNumSteps/24.0));
+                txtActiveTime.setText(activeTime + "/60 mins");
+
                 //write to database
                 try {
                     String query = "INSERT INTO tblReadings (bodyTemp, heartRate, numOfSteps, timeRecorded) VALUES (" + temp + ", " + hRate + ", " + numSteps + ", '"+ currentTS + "')";
@@ -681,7 +716,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void run() {
             while(true){
-                txtStatus.post(new Runnable() {
+                lblHeartRate.post(new Runnable() {
                     @Override
                     public void run() {
                         if(deviceDiscoverable == 1) { //only listen for requests if the device is discoverable
@@ -908,4 +943,9 @@ public class MainActivity extends AppCompatActivity
         return true;
 
     }
+
+    public static Context getMainContext(){
+        return mainActivityContext;
+    }
+
 }

@@ -42,6 +42,17 @@
             android:onClick="openStatusActivity">
 
             <ImageView
+                android:id="@+id/imgStatus"
+                android:layout_width="98dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="108dp"
+                android:layout_marginTop="70dp"
+                android:adjustViewBounds="false"
+                android:scaleType="centerCrop"
+                android:visibility="visible"
+                app:srcCompat="@drawable/starr1" />
+
+            <ImageView
                 android:id="@+id/imgSteps"
                 android:layout_width="180dp"
                 android:layout_height="180dp"
@@ -74,11 +85,11 @@
 
             <TextView
                 android:id="@+id/lblBodyTemp"
-                android:layout_width="wrap_content"
+                android:layout_width="105dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="20dp"
-                android:text="Body Temp: "
+                android:text="Temperature: "
                 android:textColor="@color/colorDarkAsh"
                 android:textSize="16sp" />
 
@@ -86,7 +97,7 @@
                 android:id="@+id/txtBodyTemp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="105dp"
+                android:layout_marginLeft="115dp"
                 android:layout_marginTop="20dp"
                 android:text="0 'C"
                 android:textColor="@color/colorDarkAsh"
@@ -94,7 +105,7 @@
 
             <TextView
                 android:id="@+id/lblHeartRate"
-                android:layout_width="wrap_content"
+                android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="45dp"
@@ -105,7 +116,7 @@
                 android:id="@+id/txtHeartRate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="100dp"
+                android:layout_marginLeft="90dp"
                 android:layout_marginTop="45dp"
                 android:text="0 BPM"
                 android:textColor="@color/colorDarkAsh"
@@ -113,29 +124,19 @@
 
             <TextView
                 android:id="@+id/lblStatus"
-                android:layout_width="wrap_content"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="70dp"
-                android:text="Fitness Level: "
+                android:text="Fitness Today:"
                 android:textColor="@color/colorDarkAsh" />
-
-            <TextView
-                android:id="@+id/txtStatus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="105dp"
-                android:layout_marginTop="70dp"
-                android:text="Beginner"
-                android:textColor="@color/colorDarkAsh"
-                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/lblRecom"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="120dp"
+                android:layout_marginTop="100dp"
                 android:text="Recommendation:"
                 android:textSize="16sp"
                 android:textStyle="bold|italic" />
@@ -143,9 +144,9 @@
             <EditText
                 android:id="@+id/txtRecom"
                 android:layout_width="183dp"
-                android:layout_height="60dp"
+                android:layout_height="80dp"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="140dp"
+                android:layout_marginTop="120dp"
                 android:background="@null"
                 android:ems="10"
                 android:gravity="start"

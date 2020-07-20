@@ -4,6 +4,7 @@ package com.example.fitnessmonitor.fitnessmonitor;
  * Created by Aniebiet Akpan on 09/06/20.
  */
 
+import android.app.Activity;
 import android.app.Application;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -172,9 +173,22 @@ public class BluetoothConnectionService {
                 Log.d(TAG, "run: ConnectThread: Could not connect to UUID: " + MY_UUID_INSECURE );
 //                Toast.makeText(mContext, "Please Turn on fitness monitor device", Toast.LENGTH_LONG).show();
                 mProgressDialog.setMessage("Couldn't find device. Closing App ...");
-                // Do something after 5s = 5000ms
-                int pid = android.os.Process.myPid();
-                android.os.Process.killProcess(pid);
+
+                //exit app
+                try {
+                    int pid = android.os.Process.myPid();
+                    android.os.Process.killProcess(pid);
+                } catch (Exception ex){
+                    System.out.println("Error exiting application");
+                }
+
+
+//                Intent intent = new Intent(MainActivity.getMainContext(), MainActivity.class);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                intent.putExtra("EXIT", true);
+//                startActivity(intent);
+                ((Activity) MainActivity.getMainContext()).finish();
+
 
             }
 
@@ -305,8 +319,14 @@ public class BluetoothConnectionService {
                     }
                 } catch (IOException e) {
                     Log.e(TAG, "write: Error reading Input Stream. " + e.getMessage() );
-                    int pid = android.os.Process.myPid();
-                    android.os.Process.killProcess(pid);
+                    //end application
+                    try {
+                        int pid = android.os.Process.myPid();
+                        android.os.Process.killProcess(pid);
+                    } catch (Exception ex){
+                        System.out.println("Error exiting application");
+                    }
+//                    ((Activity) MainActivity.getMainContext()).finish();
                     break;
                 }
             }
@@ -354,4 +374,6 @@ public class BluetoothConnectionService {
         //perform the write
         mConnectedThread.write(out);
     }
+
+
 }
