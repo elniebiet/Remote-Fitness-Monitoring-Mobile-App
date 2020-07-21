@@ -220,7 +220,7 @@ public class MainActivity extends AppCompatActivity
             sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS tblUserProfile (id INT(1) PRIMARY KEY NOT NULL, email VARCHAR, firstName VARCHAR, lastName VARCHAR, gender VARCHAR, DOB VARCHAR, height INT(3), weight INT(3), picLocation VARCHAR, picType VARCHAR)");
             sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS tblReadings (bodyTemp INT(3), heartRate INT(4), numOfSteps BIGINT(10), timeRecorded TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)");
             sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS tblDeviceID (deviceID VARCHAR, discoverable INT(1))");
-//            this.deleteDatabase("FitnessMonitorDB"); //to drob db
+//            this.deleteDatabase("FitnessMonitorDB"); //uncomment to drob db
             Log.i("SUCCESS CREATING DB: ", "database created");
             dbcreated = true;
         } catch (Exception ex){
@@ -248,6 +248,7 @@ public class MainActivity extends AppCompatActivity
                 //get current timestamp
                 Long tsLong = System.currentTimeMillis()/1000;
                 String userID = "USER"+tsLong.toString();
+                deviceID = userID;
                 try {
                     sqLiteDatabase.execSQL("INSERT INTO tblDeviceID (deviceID, discoverable) VALUES ('"+userID+"', 0)");
                     Log.i("SUCCESS INSERTING ID", "inserted generated user ID");
@@ -517,18 +518,33 @@ public class MainActivity extends AppCompatActivity
                 String temp = splitted[0];
                 String hRate = splitted[1];
                 String numSteps = splitted[2];
+
+                /*start bug fix: numSteps has lengthy string on start error, take numSteps and discard the rest*/
+                if(numSteps.contains("|")){
+                    int indexOfPipe = numSteps.indexOf("|");
+                    numSteps = numSteps.substring(0, indexOfPipe);
+                }
+                //replace non-digits
+                temp = temp.replaceAll("\\D+","");
+                hRate = hRate.replaceAll("\\D+","");
+                numSteps = numSteps.replaceAll("\\D+","");
+                System.out.println(" TEMP: " + temp + " HRATE: " + hRate + " NUMSTEPS: " + numSteps);
+                /* end bug fix */
+
                 String currentTS = getCurrentTimeStamp();
+
+
                 //update View
                 txtBodyTemp.setText(temp + " 'C");
                 txtHeartRate.setText(hRate + " BPM");
                 txtSteps.setText(Integer.toString(latestNumSteps) + " steps");
                 imgSteps.setRotation(latestNumSteps/5000f * 360f);
 
-                try {
-                    currentNumSteps = Integer.parseInt(numSteps.trim());
-                }catch (Exception ex){
-                    Log.i("CURRENTNUMSTEPS MAIN", ex.getMessage());
-                }
+                System.out.println("NUMBER OF STEPS BEFORE: " + numSteps);
+                currentNumSteps = Integer.parseInt(numSteps);
+                System.out.println(Integer.parseInt(numSteps));
+                System.out.println("NUMBER OF STEPS AFTER: " + numSteps);
+
 
                 //create intent to send number of steps as broadcast to Exercise Running
                 Intent intSendReadings = new Intent("currentReadings");
@@ -549,16 +565,13 @@ public class MainActivity extends AppCompatActivity
                     Log.i("COLOR SETTING: ", "error "+ex.getMessage());
                 }
                 //set current variables
-                currBodyTemp = (temp == "" || isNumeric(temp) == false) ? 0 : Integer.parseInt(temp);
-                currHeartRate = (hRate == "" || isNumeric(hRate) == false) ? 0 : Integer.parseInt(hRate);
-                currNumSteps = (numSteps == "" || isNumeric(numSteps) == false) ? 0 : Integer.parseInt(numSteps);
-
-                temp = Integer.toString(currBodyTemp);
-                hRate = Integer.toString(currHeartRate);
-                numSteps = Integer.toString(currNumSteps);
+                currBodyTemp = Integer.parseInt(temp);
+                currHeartRate = Integer.parseInt(hRate);
+                currNumSteps = Integer.parseInt(numSteps);
 
                 //set recommendation
-                if(currNumSteps < 1000){
+                currNumSteps = Integer.parseInt(numSteps);
+                if( currNumSteps< 1000){
                     imgStatus.setImageResource(R.drawable.starr1);
                     txtRecom.setText("Fitness level is low today: More exercise needed to reach your daily limit");
                 } else if(currNumSteps >= 1000 && currNumSteps < 2000){
@@ -583,7 +596,7 @@ public class MainActivity extends AppCompatActivity
                 //write to database
                 try {
                     String query = "INSERT INTO tblReadings (bodyTemp, heartRate, numOfSteps, timeRecorded) VALUES (" + temp + ", " + hRate + ", " + numSteps + ", '"+ currentTS + "')";
-//                    System.out.println("INSERT QUERY: " + query);
+                    System.out.println("INSERT QUERY: " + query);
                     sqLiteDatabase.execSQL(query);
                     Log.i("SUCCESSFUL INSERT: ","readings inserted to db" );
                 } catch(Exception ex){

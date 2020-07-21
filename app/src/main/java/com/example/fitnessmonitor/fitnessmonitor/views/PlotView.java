@@ -92,9 +92,14 @@ public class PlotView extends View {
         for(int i=0; i <= 23; i++){
             if(i%6 != 0 && i != 23)
                 ;
-            else
-                canvas.drawText(Integer.toString(i), st, gridHeight - marginBottomText, paint);
+            else {
+                if(i == 6 || i == 12 || i == 18)
+                    canvas.drawText(Integer.toString(i), st - gapX, gridHeight - marginBottomText, paint);
+                else
+                    canvas.drawText(Integer.toString(i), st, gridHeight - marginBottomText, paint);
+            }
             st += gapX;
+
         }
         //DRAW BINS
         float maxStepsForMaxBin = 5000.f / 9.f;
@@ -126,7 +131,8 @@ public class PlotView extends View {
             float stoX = startXPoint + mainBinWidth;
             float stoY = stopYBottom;
 
-            canvas.drawRect(startXPoint, staY, stoX, stoY, paint);
+//            canvas.drawRect(startXPoint, staY, stoX, stoY, paint);
+            canvas.drawRect(startXPoint + binWidth, staY, stoX + binWidth, stoY, paint);
         }
     }
 }
