@@ -536,7 +536,12 @@ public class MainActivity extends AppCompatActivity
 
                 //update View
                 txtBodyTemp.setText(temp + " 'C");
-                txtHeartRate.setText(hRate + " BPM");
+                //If heart rate is > 100, set text to 100+
+                if(Integer.parseInt(hRate) < 100) {
+                    txtHeartRate.setText(hRate + " BPM");
+                }else {
+                    txtHeartRate.setText("100+ BPM");
+                }
                 txtSteps.setText(Integer.toString(latestNumSteps) + " steps");
                 imgSteps.setRotation(latestNumSteps/5000f * 360f);
 
