@@ -3,7 +3,7 @@ MSc Project, Health and Fitness Monitoring Mobile App that is linked to PC Softw
 
 #Main Features 
 ## Device connection: 
-this feature allows a user to search for available fitness devices
+This feature allows a user to search for available fitness devices
 and connect the app. A filtered search is implemented so other Bluetooth devices are
 ignored.
 ## Daily workout analysis: 
@@ -23,7 +23,6 @@ hours the user was asleep.
 A user profile activity has also been implemented, to allow the user
 supply his/her personal details which include weight and height, this is useful in
 calculating the number of calories burnt by an individual.
-Aniebiet I. Akpan, 20212007, Dept of Electrical and Electronics Engineering.
 ## Nearby Health Center Detection: 
 This is an additional feature to the software,
 useful in case where a user needs to visit a health centre, the software queries google
