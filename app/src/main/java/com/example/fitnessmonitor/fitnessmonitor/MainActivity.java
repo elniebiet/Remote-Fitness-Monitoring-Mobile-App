@@ -14,6 +14,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -65,6 +66,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.security.acl.Group;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -94,11 +96,15 @@ public class MainActivity extends AppCompatActivity
     private int activityCreated = 0;
     private String userEmail = "";
     private String deviceID = "";
+    private int socialDistancingEnable = 0;
     private Boolean dbcreated = false;
     private TextView txtBodyTemp;
     private TextView txtHeartRate;
     private TextView lblHeartRate;
     private TextView txtActiveTime;
+    private Menu sidebarMenu = null;
+    private MenuItem socialDist = null;
+    private Boolean socialDistEnabled = false;
 //    private TextView txtStatus;
     private ImageView imgStatus;
     private int currBodyTemp = 0;
@@ -136,6 +142,8 @@ public class MainActivity extends AppCompatActivity
     private volatile boolean stopThread = false;
     android.app.AlertDialog.Builder builder;
     android.app.AlertDialog permissionDialog;
+
+    MediaPlayer mediaPlayer;
 
 
     BluetoothConnectionService mBluetoothConnection;
@@ -205,6 +213,17 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+        } catch (Exception ex){
+            System.out.println("ERROR STOPPING MEDIA");
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityCreated = 1;
@@ -213,13 +232,14 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         mainActivityContext = this.getApplicationContext();
+        mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.beep);
 
         /*create database*/
         try {
             sqLiteDatabase = this.openOrCreateDatabase("FitnessMonitorDB", MODE_PRIVATE, null);
             sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS tblUserProfile (id INT(1) PRIMARY KEY NOT NULL, email VARCHAR, firstName VARCHAR, lastName VARCHAR, gender VARCHAR, DOB VARCHAR, height INT(3), weight INT(3), picLocation VARCHAR, picType VARCHAR)");
             sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS tblReadings (bodyTemp INT(3), heartRate INT(4), numOfSteps BIGINT(10), timeRecorded TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)");
-            sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS tblDeviceID (deviceID VARCHAR, discoverable INT(1))");
+            sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS tblDeviceID (deviceID VARCHAR, discoverable INT(1), socialDistancingEnable INT(1))");
 //            this.deleteDatabase("FitnessMonitorDB"); //uncomment to drob db
             Log.i("SUCCESS CREATING DB: ", "database created");
             dbcreated = true;
@@ -233,13 +253,14 @@ public class MainActivity extends AppCompatActivity
             Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM tblDeviceID", null);
             int idIndex = cursor.getColumnIndex("deviceID");
             int discoverableIndex = cursor.getColumnIndex("discoverable");
-
+            int socialDistancingEnableIndex = cursor.getColumnIndex("socialDistancingEnable");
             boolean cursorResponse = cursor.moveToFirst();
 
             if(cursorResponse){
                 //get the device id
                 deviceID = cursor.getString(idIndex);
                 deviceDiscoverable = cursor.getInt(discoverableIndex);
+                socialDistancingEnable = cursor.getInt(socialDistancingEnableIndex);
                 Log.i("DEVICE ID IS: ", deviceID);
 
             } else {
@@ -250,7 +271,7 @@ public class MainActivity extends AppCompatActivity
                 String userID = "USER"+tsLong.toString();
                 deviceID = userID;
                 try {
-                    sqLiteDatabase.execSQL("INSERT INTO tblDeviceID (deviceID, discoverable) VALUES ('"+userID+"', 0)");
+                    sqLiteDatabase.execSQL("INSERT INTO tblDeviceID (deviceID, discoverable, socialDistancingEnable) VALUES ('"+userID+"', 0, 0)");
                     Log.i("SUCCESS INSERTING ID", "inserted generated user ID");
 
                 } catch(Exception e){
@@ -288,6 +309,17 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        sidebarMenu = navigationView.getMenu();
+        socialDist = sidebarMenu.findItem(R.id.nav_social_dist);
+
+        //set the socialDistEnabled nav item
+        if(socialDistancingEnable == 0){
+            socialDist.setTitle("Enable social distancing");
+        } else if(socialDistancingEnable == 1){
+            socialDist.setTitle("Disable social distancing");
+        }
+//        mniSocialDist.setTitle("DISABLE SOCI");
+
         txtRecom = (EditText) findViewById(R.id.txtRecom);
         txtRecom.setKeyListener(null);
 
@@ -316,15 +348,15 @@ public class MainActivity extends AppCompatActivity
         flStatusLayoutParams.height = statusCellHeight;//(int)(grdMainHeight * 0.9);
         flStatus.setLayoutParams(flStatusLayoutParams);
         //set active cell height
-        int activeCellHeight = (int)(0.13 * height);
+        int activeCellHeight = (int)(0.135 * height);
         FrameLayout flActive = (FrameLayout) findViewById(R.id.frmActive);
         ViewGroup.LayoutParams flActiveLayoutParams = flActive.getLayoutParams();
-        flActiveLayoutParams.height = (int)(0.9 * activeCellHeight);//(int)(grdMainHeight * 0.9);
+        flActiveLayoutParams.height = (int)(activeCellHeight);//(int)(grdMainHeight * 0.9);
         flActive.setLayoutParams(flActiveLayoutParams);
         //set exercise cell height
         FrameLayout flExercise = (FrameLayout) findViewById(R.id.frmExercise);
         ViewGroup.LayoutParams flExerciseLayoutParams = flExercise.getLayoutParams();
-        flExerciseLayoutParams.height = (int)(0.9 * activeCellHeight);//(int)(grdMainHeight * 0.9);
+        flExerciseLayoutParams.height = (int)(activeCellHeight);//(int)(grdMainHeight * 0.9);
         flExercise.setLayoutParams(flExerciseLayoutParams);
         //set sleep cell height
         FrameLayout flSleep = (FrameLayout) findViewById(R.id.frmSleep);
@@ -405,7 +437,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    //    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -425,8 +456,42 @@ public class MainActivity extends AppCompatActivity
         } else if(id == R.id.nav_remote_access) {
             Intent remoteAccessIntent = new Intent(getApplicationContext(), InterUserAccess.class);
             startActivity(remoteAccessIntent);
-        } else if (id == R.id.nav_settings) {
+        } else if (id == R.id.nav_social_dist) {
+            if(socialDist.getTitle().equals("Enable social distancing")){
+                socialDist.setTitle("Disable social distancing");
+                //update database
+                try {
+                    String query = "UPDATE tblDeviceID SET socialDistancingEnable = 1 WHERE deviceID = '" + deviceID + "';";
+                    sqLiteDatabase.execSQL(query);
+                    Log.i("SUCCESS UPDATING SD", "set socialDistancingEnable to 1");
 
+                } catch(Exception e){
+                    Log.i("ERROR UPDATING SD", "Couldnt Update socialDistancing");
+                    e.printStackTrace();
+                }
+
+                //send update to arduino
+                Log.i("SENDING UPDATE: ", "SENDING SOCIAL DISTANCING UPDATE");
+                byte[] bytes = Integer.toString(-2).getBytes(Charset.defaultCharset()); //-2 For enable, -1 for disable
+                mBluetoothConnection.write(bytes);
+
+            } else if(socialDist.getTitle().equals("Disable social distancing")){
+                socialDist.setTitle("Enable social distancing");
+                //update database
+                try {
+                    String query = "UPDATE tblDeviceID SET socialDistancingEnable = 0 WHERE deviceID = '" + deviceID + "';";
+                    sqLiteDatabase.execSQL(query);
+                    Log.i("SUCCESS UPDATING SD", "set socialDistancingEnable to 0");
+
+                } catch(Exception e){
+                    Log.i("ERROR UPDATING SD", "Couldnt Update socialDistancing");
+                    e.printStackTrace();
+                }
+                //send update to arduino
+                Log.i("SENDING UPDATE: ", "SENDING SOCIAL DISTANCING UPDATE");
+                byte[] bytes = Integer.toString(-1).getBytes(Charset.defaultCharset()); //-2 For enable, -1 for disable
+                mBluetoothConnection.write(bytes);
+            }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -501,7 +566,17 @@ public class MainActivity extends AppCompatActivity
             String readings = intent.getStringExtra("theReadings");
             System.out.println("FROM ACTIVITY: READINGS: "+ readings);
             //get readings from activity, confirm it is the right reading
-            if(readings.contains("|")) {
+            //check if -1 is in the received text, object detection notification else normal readings received
+            if(readings.contains("-1")){
+                Toast.makeText(getApplicationContext(), "object detected", Toast.LENGTH_SHORT).show();
+                try {
+                    mediaPlayer.start();
+                } catch (Exception ex){
+                    System.out.println("Error playing media: " + ex.getMessage());
+                }
+                return;
+                //buzz sound and vibrate
+            } else if(readings.contains("|") && (readings.contains("-1") == false)) {
 
                 //while reading, be checking for a newday, if its a new day, send update to fitness device
                 getLatestReadings();
@@ -512,6 +587,18 @@ public class MainActivity extends AppCompatActivity
                     Log.i("SENDING UPDATE: ", "SENDING NEWDAY UPDATE");
                     byte[] bytes = Integer.toString(latestNumSteps).getBytes(Charset.defaultCharset());
                     mBluetoothConnection.write(bytes);
+
+                    if(socialDistancingEnable == 1) {
+                        //send update to arduino
+                        Log.i("SENDING UPDATE: ", "SENDING SOCIAL DISTANCING UPDATE");
+                        byte[] byts = Integer.toString(-2).getBytes(Charset.defaultCharset()); //-2 For enable, -1 for disable
+                        mBluetoothConnection.write(byts);
+                    } else if(socialDistancingEnable == 0){
+                        //send update to arduino
+                        Log.i("SENDING UPDATE: ", "SENDING SOCIAL DISTANCING UPDATE");
+                        byte[] byts = Integer.toString(-1).getBytes(Charset.defaultCharset()); //-2 For enable, -1 for disable
+                        mBluetoothConnection.write(byts);
+                    }
                 }
 
                 String[] splitted = splitString(readings);
@@ -537,7 +624,9 @@ public class MainActivity extends AppCompatActivity
                 //update View
                 txtBodyTemp.setText(temp + " 'C");
                 //If heart rate is > 100, set text to 100+
-                if(Integer.parseInt(hRate) < 100) {
+                if(Integer.parseInt(hRate) < 55){
+                    txtHeartRate.setText("-55 BPM");
+                } else if(Integer.parseInt(hRate) < 100) {
                     txtHeartRate.setText(hRate + " BPM");
                 }else {
                     txtHeartRate.setText("100+ BPM");
@@ -563,7 +652,7 @@ public class MainActivity extends AppCompatActivity
                     if (Integer.parseInt(temp) < 34 || Integer.parseInt(temp) > 38)
                         txtBodyTemp.setTextColor(Color.RED);
                     else txtBodyTemp.setTextColor(Color.GREEN);
-                    if (Integer.parseInt(hRate) > 100 || Integer.parseInt(hRate) < 60)
+                    if (Integer.parseInt(hRate) > 100 || Integer.parseInt(hRate) < 55)
                         txtHeartRate.setTextColor(Color.RED);
                     else txtHeartRate.setTextColor(Color.GREEN);
                 } catch (Exception ex){

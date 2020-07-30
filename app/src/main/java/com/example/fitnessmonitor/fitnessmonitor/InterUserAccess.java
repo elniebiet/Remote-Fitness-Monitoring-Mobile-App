@@ -75,6 +75,7 @@ public class InterUserAccess extends AppCompatActivity {
     private String deviceID = "";
     private String requestedId = "";
     private int discoverable = 0;
+    private int socialDistancingEnable = 0;
     private SQLiteDatabase sqLiteDatabase;
     private String requestForPermissionRequestsAPI =  MainActivity.domainName + "api/permissions/";
     private String getFitnessDataAPI = MainActivity.domainName + "api/fitnessupdate/getupdate/";
@@ -91,7 +92,7 @@ public class InterUserAccess extends AppCompatActivity {
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM tblDeviceID", null);
         int idIndex = cursor.getColumnIndex("deviceID");
         int discoverableIndex = cursor.getColumnIndex("discoverable");
-
+        int socialDistancingEnableIndex = cursor.getColumnIndex("socialDistancingEnable");
         boolean cursorResponse = cursor.moveToFirst();
 
         try {
@@ -99,6 +100,7 @@ public class InterUserAccess extends AppCompatActivity {
                 //get the device id and device discoverability
                 deviceID = cursor.getString(idIndex);
                 discoverable = cursor.getInt(discoverableIndex);
+                socialDistancingEnable = cursor.getInt(socialDistancingEnableIndex);
                 Log.i("DEVICE ID IS: ", deviceID);
 
             } else {

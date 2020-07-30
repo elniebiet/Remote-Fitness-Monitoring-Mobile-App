@@ -27,9 +27,9 @@
             android:icon="@drawable/nearby"
             android:title="Nearby Health Centres" />
         <item
-            android:id="@+id/nav_settings"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Settings" />
+            android:id="@+id/nav_social_dist"
+            android:icon="@drawable/socialdistancing"
+            android:title="Enable social distancing" />
     </group>
 
 </menu>

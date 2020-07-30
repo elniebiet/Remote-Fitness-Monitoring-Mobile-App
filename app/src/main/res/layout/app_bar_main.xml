@@ -14,6 +14,7 @@
         android:layout_height="match_parent"
         android:layout_marginTop="40dp"
         android:background="@color/colorAsh"
+        android:backgroundTint="@color/wallet_holo_blue_light"
         android:columnCount="1"
         android:rowCount="5">
 
@@ -144,7 +145,7 @@
             <EditText
                 android:id="@+id/txtRecom"
                 android:layout_width="183dp"
-                android:layout_height="80dp"
+                android:layout_height="95dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="120dp"
                 android:background="@null"
