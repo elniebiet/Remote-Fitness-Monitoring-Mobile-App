@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.fitnessmonitor.fitnessmonitor.UserProfile">
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/colorAsh"
+        android:backgroundTint="@color/wallet_holo_blue_light"
+        android:columnCount="1"
+        android:rowCount="11"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <FrameLayout
+            android:id="@+id/flLastName"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_column="0"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_row="5"
+            android:background="@drawable/border_radius_status">
+
+            <EditText
+                android:id="@+id/edtLastName"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="90dp"
+                android:layout_marginTop="10dp"
+                android:background="@null"
+                android:editable="true"
+                android:ems="10"
+                android:hint="your last name"
+                android:inputType="text"
+                android:maxLength="25"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/lblLastName"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:text="Last name:" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/flFirstName"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_column="0"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_row="4"
+            android:background="@drawable/border_radius_status">
+
+            <EditText
+                android:id="@+id/edtFirstName"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="90dp"
+                android:layout_marginTop="10dp"
+                android:background="@null"
+                android:editable="true"
+                android:ems="10"
+                android:hint="your first name"
+                android:inputType="text"
+                android:maxLength="25"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/lblFirstName"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:text="First name:" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/flBack"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_column="0"
+            android:layout_row="0">
+
+            <Button
+                android:id="@+id/btnBack"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                android:onClick="goBackHome"
+                android:text="Back" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/flPicture1"
+            android:layout_width="match_parent"
+            android:layout_height="130dp"
+            android:layout_column="0"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_row="1"
+            android:background="@drawable/border_radius_status">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/imgPicture1"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_column="0"
+                    android:layout_row="1"
+                    android:scaleType="centerCrop"
+                    app:srcCompat="@drawable/workout1" />
+
+                <ImageView
+                    android:id="@+id/imgProfilePicture"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_column="0"
+                    android:layout_row="1"
+                    android:onClick="updatePhoto"
+                    android:scaleType="centerCrop"
+                    app:srcCompat="@drawable/profilepictureicon" />
+
+
+            </RelativeLayout>
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/flGender"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_column="0"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_row="3"
+            android:background="@drawable/border_radius_status">
+
+            <TextView
+                android:id="@+id/lblGender"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:text="Gender: " />
+
+            <Spinner
+                android:id="@+id/spnGender"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="70dp"
+                android:layout_marginTop="10dp" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/flDateOfBirth"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_column="0"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_row="6"
+            android:background="@drawable/border_radius_status">
+
+            <TextView
+                android:id="@+id/txtDOB"
+                android:layout_width="120dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="105dp"
+                android:layout_marginTop="10dp"
+                android:editable="false"
+                android:hint="set DOB"
+                android:onClick="dobClicked" />
+
+            <TextView
+                android:id="@+id/lblDOB"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:text="Date of Birth: " />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/flHeight"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_column="0"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_row="7"
+            android:background="@drawable/border_radius_status">
+
+            <TextView
+                android:id="@+id/lblHeight"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:text="Height:" />
+
+            <EditText
+                android:id="@+id/edtHeight"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="70dp"
+                android:layout_marginTop="10dp"
+                android:background="@null"
+                android:editable="true"
+                android:ems="10"
+                android:hint="height in cm"
+                android:inputType="number"
+                android:maxLength="3"
+                android:textSize="12sp" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/flWeight"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_column="0"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_row="8"
+            android:background="@drawable/border_radius_status">
+
+            <TextView
+                android:id="@+id/lblWeight"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:text="Weight:" />
+
+            <EditText
+                android:id="@+id/edtWeight"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="70dp"
+                android:layout_marginTop="10dp"
+                android:background="@null"
+                android:editable="true"
+                android:ems="10"
+                android:hint="weight in kg"
+                android:inputType="number"
+                android:maxLength="3"
+                android:textSize="12sp" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/flUpdate"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_column="0"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_row="9">
+
+            <Button
+                android:id="@+id/btnUpdateProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:background="@android:color/holo_green_light"
+                android:onClick="btnUpdateProfileClicked"
+                android:text="Update" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/flPicture2"
+            android:layout_width="match_parent"
+            android:layout_height="110dp"
+            android:layout_column="0"
+            android:layout_row="10">
+
+            <ImageView
+                android:id="@+id/imgPicture2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/workout3" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/flEmail"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_column="0"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_row="2"
+            android:background="@drawable/border_radius_status">
+
+            <TextView
+                android:id="@+id/lblEmail"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:text="Email:" />
+
+            <TextView
+                android:id="@+id/txtEmail"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="70dp"
+                android:layout_marginTop="10dp"
+                android:clickable="false"
+                android:hint="your email" />
+        </FrameLayout>
+
+    </GridLayout>
+
+</android.support.constraint.ConstraintLayout>
+
+
+
+    <!--<?xml version="1.0" encoding="utf-8"?>-->
+    <!--<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+    <!--xmlns:tools="http://schemas.android.com/tools"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--tools:context="com.example.fitnessmonitor.fitnessmonitor.ConnectDevice">-->
+
+    <!--<GridLayout-->
+    <!--android:id="@+id/grdConnectDevice"-->
+    <!--android:layout_width="395dp"-->
+    <!--android:layout_height="643dp"-->
+    <!--android:layout_marginBottom="8dp"-->
+    <!--android:layout_marginEnd="8dp"-->
+    <!--android:layout_marginStart="8dp"-->
+    <!--android:layout_marginTop="8dp"-->
+    <!--android:columnCount="1"-->
+    <!--android:rowCount="3"-->
+    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toTopOf="parent">-->
+
+    <!--<FrameLayout-->
+    <!--android:id="@+id/flMessage"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="100dp"-->
+    <!--android:layout_row="1">-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/txtMessage"-->
+    <!--android:layout_width="200dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="Connect to the fitness device."-->
+    <!--android:textColor="@android:color/black"-->
+    <!--android:textSize="20sp" />-->
+
+    <!--<Button-->
+    <!--android:id="@+id/btnSearch"-->
+    <!--android:layout_width="150dp"-->
+    <!--android:layout_height="30dp"-->
+    <!--android:layout_marginTop="60dp"-->
+    <!--android:background="@color/colorAsh"-->
+    <!--android:onClick="searchDevices"-->
+    <!--android:text="Search"-->
+    <!--android:textStyle="italic" />-->
+
+    <!--</FrameLayout>-->
+
+    <!--<FrameLayout-->
+    <!--android:id="@+id/flBack"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="40dp"-->
+    <!--android:layout_column="0"-->
+    <!--android:layout_row="0">-->
+
+    <!--<Button-->
+    <!--android:id="@+id/btnBack"-->
+    <!--android:layout_width="60dp"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:onClick="goBackHome"-->
+    <!--android:text="Back" />-->
+
+    <!--</FrameLayout>-->
+
+    <!--<FrameLayout-->
+    <!--android:id="@+id/flList"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="500dp"-->
+    <!--android:layout_column="0"-->
+    <!--android:layout_row="2"-->
+    <!--android:background="@color/colorAsh"-->
+    <!--android:visibility="visible">-->
+
+    <!--<ListView-->
+    <!--android:id="@+id/lstDevices"-->
+    <!--android:layout_width="368dp"-->
+    <!--android:layout_height="405dp"-->
+    <!--android:layout_marginBottom="8dp"-->
+    <!--android:layout_marginEnd="8dp"-->
+    <!--android:layout_marginStart="8dp"-->
+    <!--android:layout_marginTop="8dp"-->
+    <!--app:layout_constraintBottom_toTopOf="@+id/statusTextView"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toTopOf="parent" />-->
+
+    <!--</FrameLayout>-->
+    <!--</GridLayout>-->
+    <!--</android.support.constraint.ConstraintLayout>-->

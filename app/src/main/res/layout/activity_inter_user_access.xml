@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.fitnessmonitor.fitnessmonitor.InterUserAccess">
+
+    <FrameLayout
+        android:id="@+id/statusActMainFrame"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:background="@color/wallet_holo_blue_light"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <FrameLayout
+            android:id="@+id/frmSearch"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="50dp">
+
+            <EditText
+                android:id="@+id/edtSearch"
+                android:layout_width="140dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="80dp"
+                android:layout_marginTop="5dp"
+                android:background="@null"
+                android:ems="10"
+                android:hint="e.g USER12..."
+                android:inputType="textPersonName"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/lblUserId"
+                android:layout_width="70dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="5dp"
+                android:paddingTop="10dp"
+                android:text="User ID "
+                android:textAlignment="center"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnSearch"
+                android:layout_width="120dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="225dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/wallet_holo_blue_light"
+                android:onClick="checkFitnessClicked"
+                android:text="Check Fitness"
+                android:textAlignment="center"
+                android:textSize="12sp" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/frmHeartRate"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginTop="180dp">
+
+            <TextView
+                android:id="@+id/lblHeartRate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:text="Heart Rate: "
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txtHeartRate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="30dp"
+                android:text="0"
+                android:textSize="20sp" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/frmBodyTemp"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="110dp">
+
+            <TextView
+                android:id="@+id/lblBodyTemp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:text="Body Temp: "
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txtBodyTemp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="30dp"
+                android:text="0"
+                android:textSize="20sp" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/frmBackButton"
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
+
+            <Button
+                android:id="@+id/btnBack"
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:backgroundTint="@color/wallet_holo_blue_light"
+                android:onClick="goBackHome"
+                android:text="Back"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnDiscoverability"
+                android:layout_width="120dp"
+                android:layout_height="35dp"
+                android:layout_marginLeft="240dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/colorPrimary"
+                android:onClick="btnDiscoverabilityClicked"
+                android:text="Enable Discoverability"
+                android:textSize="10sp" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/frmDistanceCovered"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginTop="360dp">
+
+            <TextView
+                android:id="@+id/lblDistance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:text="Distance"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txtDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="30dp"
+                android:text="0"
+                android:textSize="25sp" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/frmCalories"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginTop="440dp">
+
+            <TextView
+                android:id="@+id/lblCalories"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Calories burnt"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txtCalories"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="30dp"
+                android:text="0"
+                android:textSize="25sp" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/frmDailySteps"
+            android:layout_width="379dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="250dp"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="571dp">
+
+            <TextView
+                android:id="@+id/lblStepsToday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:text="Steps Today:"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txtStepsToday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="30dp"
+                android:text="0"
+                android:textSize="25sp" />
+        </FrameLayout>
+
+    </FrameLayout>
+</android.support.constraint.ConstraintLayout>

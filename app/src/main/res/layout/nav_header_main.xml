@@ -35,13 +35,13 @@
         android:textSize="18sp" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/txtUserEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="useremail@gmail.com"
         android:textAlignment="textStart"
         android:textColor="@android:color/black"
-        android:textSize="18sp" />
+        android:textSize="12sp" />
 
 
 </LinearLayout>

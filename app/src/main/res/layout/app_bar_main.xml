@@ -14,17 +14,44 @@
         android:layout_height="match_parent"
         android:layout_marginTop="40dp"
         android:background="@color/colorAsh"
+        android:backgroundTint="@color/wallet_holo_blue_light"
         android:columnCount="1"
-        android:rowCount="4">
+        android:rowCount="5">
+
+        <FrameLayout
+            android:id="@+id/frmPicture"
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
+
+            <ImageView
+                android:id="@+id/imgPicture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/workout2" />
+        </FrameLayout>
 
         <FrameLayout
             android:id="@+id/frmStatus"
             android:layout_width="match_parent"
             android:layout_height="220dp"
+            android:layout_column="0"
             android:layout_margin="8dp"
             android:layout_marginBottom="0dp"
+            android:layout_row="1"
             android:background="@drawable/border_radius_status"
             android:onClick="openStatusActivity">
+
+            <ImageView
+                android:id="@+id/imgStatus"
+                android:layout_width="65dp"
+                android:layout_height="14dp"
+                android:layout_marginLeft="111dp"
+                android:layout_marginTop="74dp"
+                android:adjustViewBounds="false"
+                android:scaleType="centerCrop"
+                android:visibility="visible"
+                app:srcCompat="@drawable/starrr1" />
 
             <ImageView
                 android:id="@+id/imgSteps"
@@ -36,34 +63,34 @@
 
             <TextView
                 android:id="@+id/txtSteps"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="40dp"
                 android:layout_marginLeft="265dp"
                 android:layout_marginTop="100dp"
-                android:text="23 steps"
+                android:text="0 steps"
                 android:textAlignment="center"
                 android:textColor="@color/colorBlack"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:textStyle="bold|italic" />
 
             <TextView
                 android:id="@+id/txt6000"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="270dp"
+                android:layout_width="50dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="268dp"
                 android:layout_marginTop="7dp"
-                android:text="6000"
+                android:text="5000"
                 android:textColor="@color/colorBlack"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/lblBodyTemp"
-                android:layout_width="wrap_content"
+                android:layout_width="105dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="20dp"
-                android:text="Body Temp: "
+                android:text="Temperature: "
                 android:textColor="@color/colorDarkAsh"
                 android:textSize="16sp" />
 
@@ -71,15 +98,15 @@
                 android:id="@+id/txtBodyTemp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="100dp"
+                android:layout_marginLeft="115dp"
                 android:layout_marginTop="20dp"
-                android:text="36 'C"
+                android:text="0 'C"
                 android:textColor="@color/colorDarkAsh"
                 android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/lblHeartRate"
-                android:layout_width="wrap_content"
+                android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="45dp"
@@ -90,37 +117,27 @@
                 android:id="@+id/txtHeartRate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="100dp"
+                android:layout_marginLeft="90dp"
                 android:layout_marginTop="45dp"
-                android:text="78 BPM"
+                android:text="0 BPM"
                 android:textColor="@color/colorDarkAsh"
                 android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/lblStatus"
-                android:layout_width="wrap_content"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="70dp"
-                android:text="Fitness Level: "
+                android:text="Fitness Today:"
                 android:textColor="@color/colorDarkAsh" />
-
-            <TextView
-                android:id="@+id/txtStatus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="110dp"
-                android:layout_marginTop="70dp"
-                android:text="Beginner"
-                android:textColor="@color/colorDarkAsh"
-                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/lblRecom"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="120dp"
+                android:layout_marginTop="100dp"
                 android:text="Recommendation:"
                 android:textSize="16sp"
                 android:textStyle="bold|italic" />
@@ -128,9 +145,9 @@
             <EditText
                 android:id="@+id/txtRecom"
                 android:layout_width="183dp"
-                android:layout_height="60dp"
+                android:layout_height="95dp"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="140dp"
+                android:layout_marginTop="120dp"
                 android:background="@null"
                 android:ems="10"
                 android:gravity="start"
@@ -138,7 +155,8 @@
                 android:text="More exercise needed to keep fit."
                 android:textAlignment="textStart"
                 android:textColor="@color/colorDarkAsh"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:textStyle="italic" />
 
         </FrameLayout>
 
@@ -149,7 +167,7 @@
             android:layout_column="0"
             android:layout_margin="8dp"
             android:layout_marginBottom="0dp"
-            android:layout_row="1"
+            android:layout_row="2"
             android:background="@drawable/border_radius_status"
             android:onClick="openStatusActivity">
 
@@ -175,7 +193,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="20dp"
-                android:text="35/60 mins"
+                android:text="0/60 mins"
                 android:textColor="@color/colorDarkAsh"
                 android:textSize="30sp" />
 
@@ -195,7 +213,7 @@
             android:layout_column="0"
             android:layout_margin="8dp"
             android:layout_marginBottom="0dp"
-            android:layout_row="2"
+            android:layout_row="3"
             android:background="@drawable/border_radius_status">
 
             <TextView
@@ -212,7 +230,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="35dp"
+                android:layout_marginTop="30dp"
                 android:onClick="goToWalking"
                 app:srcCompat="@drawable/walk" />
 
@@ -221,7 +239,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginLeft="70dp"
-                android:layout_marginTop="35dp"
+                android:layout_marginTop="30dp"
                 android:onClick="goToRunning"
                 app:srcCompat="@drawable/run" />
 
@@ -229,7 +247,7 @@
                 android:id="@+id/lblRecent"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
-                android:layout_marginTop="75dp"
+                android:layout_marginTop="70dp"
                 android:onClick="goToRecentWorkOuts"
                 android:text=">> Recent Workouts "
                 android:textAlignment="textEnd"
@@ -251,7 +269,7 @@
             android:layout_column="0"
             android:layout_margin="8dp"
             android:layout_marginBottom="0dp"
-            android:layout_row="3"
+            android:layout_row="4"
             android:background="@drawable/border_radius_status"
             android:onClick="goToSleep">
 
