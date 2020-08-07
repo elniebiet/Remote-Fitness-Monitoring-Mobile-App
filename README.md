@@ -3,7 +3,7 @@
 ## Home
 ![](screenshots/new_home.jpg)
 ## functions
-![](screenshots/new_slider_home.jpg)
+![](screenshots/new_slider.jpg)
 ![](screenshots/new_daily_analysis.jpg)
 ![](screenshots/nearest_health_centers.jpg)
 # Remote monitoring
