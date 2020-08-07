@@ -44,14 +44,14 @@
 
             <ImageView
                 android:id="@+id/imgStatus"
-                android:layout_width="98dp"
-                android:layout_height="20dp"
-                android:layout_marginLeft="108dp"
-                android:layout_marginTop="70dp"
+                android:layout_width="65dp"
+                android:layout_height="14dp"
+                android:layout_marginLeft="111dp"
+                android:layout_marginTop="74dp"
                 android:adjustViewBounds="false"
                 android:scaleType="centerCrop"
                 android:visibility="visible"
-                app:srcCompat="@drawable/starr1" />
+                app:srcCompat="@drawable/starrr1" />
 
             <ImageView
                 android:id="@+id/imgSteps"
@@ -67,7 +67,7 @@
                 android:layout_height="40dp"
                 android:layout_marginLeft="265dp"
                 android:layout_marginTop="100dp"
-                android:text="200000 steps"
+                android:text="0 steps"
                 android:textAlignment="center"
                 android:textColor="@color/colorBlack"
                 android:textSize="12sp"
@@ -193,7 +193,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="20dp"
-                android:text="35/60 mins"
+                android:text="0/60 mins"
                 android:textColor="@color/colorDarkAsh"
                 android:textSize="30sp" />
 

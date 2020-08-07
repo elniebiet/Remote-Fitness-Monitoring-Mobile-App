@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity
     android.app.AlertDialog.Builder builder;
     android.app.AlertDialog permissionDialog;
 
-    MediaPlayer mediaPlayer;
+    MediaPlayer mediaPlayer = null;
 
 
     BluetoothConnectionService mBluetoothConnection;
@@ -212,16 +212,16 @@ public class MainActivity extends AppCompatActivity
         this.moveTaskToBack(true);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        try {
-            mediaPlayer.stop();
-            mediaPlayer.release();
-        } catch (Exception ex){
-            System.out.println("ERROR STOPPING MEDIA");
-        }
-    }
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        try {
+//            mediaPlayer.stop();
+//            mediaPlayer.release();
+//        } catch (Exception ex){
+//            System.out.println("ERROR STOPPING MEDIA");
+//        }
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -666,19 +666,19 @@ public class MainActivity extends AppCompatActivity
                 //set recommendation
                 currNumSteps = Integer.parseInt(numSteps);
                 if( currNumSteps< 1000){
-                    imgStatus.setImageResource(R.drawable.starr1);
+                    imgStatus.setImageResource(R.drawable.starrr1);
                     txtRecom.setText("Fitness level is low today: More exercise needed to reach your daily limit");
                 } else if(currNumSteps >= 1000 && currNumSteps < 2000){
-                    imgStatus.setImageResource(R.drawable.starr2);
+                    imgStatus.setImageResource(R.drawable.starrr2);
                     txtRecom.setText("Fitness level is low today: More exercise needed to reach your daily limit");
                 } else if(currNumSteps >= 2000 && currNumSteps < 3000){
-                    imgStatus.setImageResource(R.drawable.starr3);
+                    imgStatus.setImageResource(R.drawable.starrr3);
                     txtRecom.setText("Fitness level is avarage today: More exercise needed to reach your daily limit");
                 } else if(currNumSteps >= 3000 && currNumSteps < 4000){
-                    imgStatus.setImageResource(R.drawable.starr4);
+                    imgStatus.setImageResource(R.drawable.starrr4);
                     txtRecom.setText("Fitness level is high today: you can still reach your daily limit");
                 } else if(currNumSteps >= 4000){
-                    imgStatus.setImageResource(R.drawable.starr5);
+                    imgStatus.setImageResource(R.drawable.starrr5);
                     txtRecom.setText("Fitness level is high today: You have reached your daily limit");
                 }
 
