@@ -23,5 +23,4 @@
     <style name="MyDrawerArrowToggle" parent="Widget.AppCompat.DrawerArrowToggle">
         <item name="color">@color/colorPrimaryDark</item>
     </style>
-
 </resources>

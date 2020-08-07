@@ -1,5 +1,6 @@
 package com.example.fitnessmonitor.fitnessmonitor;
 
+import android.content.pm.ActivityInfo;
 import android.graphics.Point;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,7 +15,7 @@ public class RecentWorkOuts extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recent_work_outs);
-
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         //get current screen dimensions
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();

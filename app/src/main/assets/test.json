@@ -1,0 +1,572 @@
+{
+   "html_attributions" : [],
+   "results" : [
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : {
+            "location" : {
+               "lat" : 52.9427336,
+               "lng" : -1.1826797
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 52.94413597989272,
+                  "lng" : -1.181192370107278
+               },
+               "southwest" : {
+                  "lat" : 52.94143632010728,
+                  "lng" : -1.183892029892722
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/doctor-71.png",
+         "id" : "a7f731c6f8bb575dc278789117854c2b991bdfc0",
+         "name" : "Nottingham NHS Treatment Centre",
+         "opening_hours" : {
+            "open_now" : false
+         },
+         "photos" : [
+            {
+               "height" : 2448,
+               "html_attributions" : [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/112144626768503910365\"\u003eSulayman Jallow\u003c/a\u003e"
+               ],
+               "photo_reference" : "CmRaAAAAxhdrJJTzYwpApwIFR0oIgp21RzbEX57BEWHIB3_B6Lf5YAMPXlFqxkGpnXPGyETvh2QhITiTqlAOfFkV7CQyyTz-loUS4kcxfqeRh7BVUT5GZKT0c5JJar71iWNhHhuEEhB_giFAhZttVyxuA-RhCTnQGhQztRLyToJ3EcFRmvyxXgqt4FU9PQ",
+               "width" : 2448
+            }
+         ],
+         "place_id" : "ChIJdaMNvBDCeUgRxsnqv4KD29Q",
+         "plus_code" : {
+            "compound_code" : "WRV8+3W Nottingham",
+            "global_code" : "9C4WWRV8+3W"
+         },
+         "rating" : 3.8,
+         "reference" : "ChIJdaMNvBDCeUgRxsnqv4KD29Q",
+         "scope" : "GOOGLE",
+         "types" : [ "hospital", "health", "point_of_interest", "establishment" ],
+         "user_ratings_total" : 62,
+         "vicinity" : "Lister Rd, Lenton, Nottingham"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : {
+            "location" : {
+               "lat" : 52.94922889999999,
+               "lng" : -1.2307048
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 52.95071967989272,
+                  "lng" : -1.229252120107278
+               },
+               "southwest" : {
+                  "lat" : 52.94802002010728,
+                  "lng" : -1.231951779892722
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/generic_business-71.png",
+         "id" : "dd4d5be6e35245d8c84086be31bcb886b53e3821",
+         "name" : "Wollaton Vale Health Centre",
+         "opening_hours" : {
+            "open_now" : false
+         },
+         "photos" : [
+            {
+               "height" : 2988,
+               "html_attributions" : [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/103145600569323373237\"\u003eA A Ali\u003c/a\u003e"
+               ],
+               "photo_reference" : "CmRaAAAA6mhP7SSSq4H-e-WDNa_n_I68WhbNmQDj6lDzRIlBByCTZd8USOQ9aKpJx4yMYK2UprMjpvyw6WsE5ipMh27_2QPNxxt0mYmDhheZyb1ci4Q3hAc1zb1vb9kHIqwbxEC3EhDSvspfjG7EUS54XqGEbfqEGhRF80F-KLMAIriivMQSbIUgSoTt8g",
+               "width" : 5312
+            }
+         ],
+         "place_id" : "ChIJe53rf4vpeUgRxlsd64aptTE",
+         "plus_code" : {
+            "compound_code" : "WQX9+MP Nottingham",
+            "global_code" : "9C4WWQX9+MP"
+         },
+         "rating" : 2.8,
+         "reference" : "ChIJe53rf4vpeUgRxlsd64aptTE",
+         "scope" : "GOOGLE",
+         "types" : [ "health", "point_of_interest", "establishment" ],
+         "user_ratings_total" : 6,
+         "vicinity" : "Wollaton Vale, Nottingham"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : {
+            "location" : {
+               "lat" : 52.9435955,
+               "lng" : -1.1850038
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 52.94521292989273,
+                  "lng" : -1.18428535
+               },
+               "southwest" : {
+                  "lat" : 52.94251327010728,
+                  "lng" : -1.18715915
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/doctor-71.png",
+         "id" : "1ee1551b34db782d3e170781b019022eccfe8441",
+         "name" : "Queen's Medical Centre",
+         "opening_hours" : {
+            "open_now" : true
+         },
+         "photos" : [
+            {
+               "height" : 433,
+               "html_attributions" : [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/115671293803441044238\"\u003eHannah Thornton\u003c/a\u003e"
+               ],
+               "photo_reference" : "CmRaAAAAPH2IZSNb5t2QDPCfUJgj8FiWIbsH0RdJcsuplazgtju_YV0JGmuA9PLLY1QWC0dImblQkNHZTCrP1-UXuuDb4z3b99KUdez0EeEiLEt-9cXjCJBMSD1DzCC_3pHs4300EhBXve46ktgqiOu6oSMDsiHcGhQIEP_Yji4JZGo_xTjVcrd4Mpoa-Q",
+               "width" : 640
+            }
+         ],
+         "place_id" : "ChIJA9hEFxDCeUgRU0fZWcxjCuU",
+         "plus_code" : {
+            "compound_code" : "WRV7+CX Nottingham",
+            "global_code" : "9C4WWRV7+CX"
+         },
+         "rating" : 3.9,
+         "reference" : "ChIJA9hEFxDCeUgRU0fZWcxjCuU",
+         "scope" : "GOOGLE",
+         "types" : [ "hospital", "health", "point_of_interest", "establishment" ],
+         "user_ratings_total" : 363,
+         "vicinity" : "Derby Rd, Lenton, Nottingham"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : {
+            "location" : {
+               "lat" : 52.950672,
+               "lng" : -1.1770262
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 52.95190157989273,
+                  "lng" : -1.175518220107278
+               },
+               "southwest" : {
+                  "lat" : 52.94920192010728,
+                  "lng" : -1.178217879892722
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/civic_building-71.png",
+         "id" : "86161d207bf3107799a95354dc8040c1e70d26c5",
+         "name" : "Derby Road Health Centre",
+         "opening_hours" : {
+            "open_now" : false
+         },
+         "photos" : [
+            {
+               "height" : 3264,
+               "html_attributions" : [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/117751895022235677350\"\u003eC A Abi\u003c/a\u003e"
+               ],
+               "photo_reference" : "CmRaAAAAON5se251evppiSgpBAHwyDFu__T7vdXyQjRSVW6SmyRyWcctsq9s92F-dOVBqBR8ML8w3vlEJmLwlZhCDQRpU9LWT8SLdDmnOhrDS5Cr8NRse9tXa_c7DgXRJdZVjDdTEhD8xRlrcyxHDhqfQt1u1F_tGhRn6wvdsGuPj2c_CuUuCxO7TYuHxQ",
+               "width" : 2448
+            }
+         ],
+         "place_id" : "ChIJwbBbkh7CeUgR80xUDyDYbU8",
+         "plus_code" : {
+            "compound_code" : "XR2F+75 Nottingham",
+            "global_code" : "9C4WXR2F+75"
+         },
+         "rating" : 3.2,
+         "reference" : "ChIJwbBbkh7CeUgR80xUDyDYbU8",
+         "scope" : "GOOGLE",
+         "types" : [ "health", "point_of_interest", "establishment" ],
+         "user_ratings_total" : 31,
+         "vicinity" : "336 Derby Rd, Lenton, Nottingham"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : {
+            "location" : {
+               "lat" : 52.9493065,
+               "lng" : -1.2309499
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 52.95079192989272,
+                  "lng" : -1.229499170107278
+               },
+               "southwest" : {
+                  "lat" : 52.94809227010728,
+                  "lng" : -1.232198829892722
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/generic_business-71.png",
+         "id" : "4b5b58f50405663eb86efd11793fd02a7ca62784",
+         "name" : "Deer Park Family Medical Practice",
+         "place_id" : "ChIJMw6iiIzpeUgRJe0-BAi_XF8",
+         "plus_code" : {
+            "compound_code" : "WQX9+PJ Nottingham",
+            "global_code" : "9C4WWQX9+PJ"
+         },
+         "rating" : 2,
+         "reference" : "ChIJMw6iiIzpeUgRJe0-BAi_XF8",
+         "scope" : "GOOGLE",
+         "types" : [ "doctor", "hospital", "health", "point_of_interest", "establishment" ],
+         "user_ratings_total" : 25,
+         "vicinity" : "Wollaton Vale Health Centre, Nottingham"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : {
+            "location" : {
+               "lat" : 52.9284469,
+               "lng" : -1.2150414
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 52.92973637989272,
+                  "lng" : -1.213837870107278
+               },
+               "southwest" : {
+                  "lat" : 52.92703672010727,
+                  "lng" : -1.216537529892722
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/doctor-71.png",
+         "id" : "2980a9c7f8020701b2d4488550a11a4e3802755f",
+         "name" : "The Oaks Medical Centre",
+         "opening_hours" : {
+            "open_now" : false
+         },
+         "place_id" : "ChIJs_Yjn8PpeUgRcRTp7p78bK4",
+         "plus_code" : {
+            "compound_code" : "WQHM+9X Nottingham",
+            "global_code" : "9C4WWQHM+9X"
+         },
+         "rating" : 3.5,
+         "reference" : "ChIJs_Yjn8PpeUgRcRTp7p78bK4",
+         "scope" : "GOOGLE",
+         "types" : [ "hospital", "health", "point_of_interest", "establishment" ],
+         "user_ratings_total" : 31,
+         "vicinity" : "18-20 Villa St, Beeston, Nottingham"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : {
+            "location" : {
+               "lat" : 52.9425227,
+               "lng" : -1.1857515
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 52.94395117989273,
+                  "lng" : -1.184250970107278
+               },
+               "southwest" : {
+                  "lat" : 52.94125152010729,
+                  "lng" : -1.186950629892722
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/generic_business-71.png",
+         "id" : "78cb9ded2e4f04b035cfb897d84779124b9da0c8",
+         "name" : "ABC",
+         "place_id" : "ChIJi6Q5EBDCeUgRjbupmmACoGY",
+         "plus_code" : {
+            "compound_code" : "WRV7+2M Nottingham",
+            "global_code" : "9C4WWRV7+2M"
+         },
+         "rating" : 0,
+         "reference" : "ChIJi6Q5EBDCeUgRjbupmmACoGY",
+         "scope" : "GOOGLE",
+         "types" : [ "health", "point_of_interest", "establishment" ],
+         "user_ratings_total" : 0,
+         "vicinity" : "Derby Rd, Lenton, Nottingham"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : {
+            "location" : {
+               "lat" : 52.95065959999999,
+               "lng" : -1.1795765
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 52.95213312989272,
+                  "lng" : -1.178326470107278
+               },
+               "southwest" : {
+                  "lat" : 52.94943347010727,
+                  "lng" : -1.181026129892722
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/generic_business-71.png",
+         "id" : "59a2a84521d3a33bc5cd9a83e44e321cf0854d04",
+         "name" : "Dr G Srinivasan - Derby Road Health Centre",
+         "place_id" : "ChIJubBbkh7CeUgRks3cxYWUpho",
+         "plus_code" : {
+            "compound_code" : "XR2C+75 Nottingham",
+            "global_code" : "9C4WXR2C+75"
+         },
+         "rating" : 0,
+         "reference" : "ChIJubBbkh7CeUgRks3cxYWUpho",
+         "scope" : "GOOGLE",
+         "types" : [ "doctor", "health", "point_of_interest", "establishment" ],
+         "user_ratings_total" : 0,
+         "vicinity" : "336 Derby Rd, Lenton, Nottingham"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : {
+            "location" : {
+               "lat" : 52.9420665,
+               "lng" : -1.1837443
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 52.94333622989272,
+                  "lng" : -1.182479170107278
+               },
+               "southwest" : {
+                  "lat" : 52.94063657010728,
+                  "lng" : -1.185178829892722
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/doctor-71.png",
+         "id" : "808286f5c5ff535a4fb6db04e129e80527e49726",
+         "name" : "Occupational Health Department",
+         "place_id" : "ChIJNYwbYBDCeUgR7bPJGgp8M5g",
+         "plus_code" : {
+            "compound_code" : "WRR8+RG Nottingham",
+            "global_code" : "9C4WWRR8+RG"
+         },
+         "rating" : 4,
+         "reference" : "ChIJNYwbYBDCeUgR7bPJGgp8M5g",
+         "scope" : "GOOGLE",
+         "types" : [ "hospital", "health", "point_of_interest", "establishment" ],
+         "user_ratings_total" : 1,
+         "vicinity" : "Lenton, Nottingham"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : {
+            "location" : {
+               "lat" : 52.9258779,
+               "lng" : -1.1667781
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 52.92722342989272,
+                  "lng" : -1.165442920107278
+               },
+               "southwest" : {
+                  "lat" : 52.92452377010728,
+                  "lng" : -1.168142579892722
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/doctor-71.png",
+         "id" : "62be6bbc15b43a479fb3dc8b5653920dfaabb851",
+         "name" : "Queen's Medical Centre Nottingham",
+         "place_id" : "ChIJVVCac0TCeUgR7Jz00MqVZX0",
+         "plus_code" : {
+            "compound_code" : "WRGM+97 Nottingham",
+            "global_code" : "9C4WWRGM+97"
+         },
+         "rating" : 0,
+         "reference" : "ChIJVVCac0TCeUgR7Jz00MqVZX0",
+         "scope" : "GOOGLE",
+         "types" : [ "hospital", "health", "point_of_interest", "establishment" ],
+         "user_ratings_total" : 0,
+         "vicinity" : "Clifton Boulevard, Derby Rd, Nottingham"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : {
+            "location" : {
+               "lat" : 52.90863640000001,
+               "lng" : -1.1844062
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 52.91012042989271,
+                  "lng" : -1.183363120107278
+               },
+               "southwest" : {
+                  "lat" : 52.90742077010727,
+                  "lng" : -1.186062779892722
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/generic_business-71.png",
+         "id" : "2e5823d176fd4f2693648f0e7846be2a7bac0d5b",
+         "name" : "Cygnet Hospital Clifton",
+         "opening_hours" : {
+            "open_now" : false
+         },
+         "place_id" : "ChIJ_bJSYojCeUgRFcn9fDXOY3I",
+         "plus_code" : {
+            "compound_code" : "WR58+F6 Nottingham",
+            "global_code" : "9C4WWR58+F6"
+         },
+         "rating" : 3,
+         "reference" : "ChIJ_bJSYojCeUgRFcn9fDXOY3I",
+         "scope" : "GOOGLE",
+         "types" : [ "health", "point_of_interest", "establishment" ],
+         "user_ratings_total" : 1,
+         "vicinity" : "Clifton Ln, Clifton, Nottingham"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : {
+            "location" : {
+               "lat" : 52.9085465,
+               "lng" : -1.1849553
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 52.90991367989272,
+                  "lng" : -1.183752120107278
+               },
+               "southwest" : {
+                  "lat" : 52.90721402010728,
+                  "lng" : -1.186451779892722
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/generic_business-71.png",
+         "id" : "219811e8d1c6fae29c3406846a8970a2d5d079e7",
+         "name" : "Cambian Ansel Clinic",
+         "place_id" : "ChIJ1U-sfYjCeUgRe4uPqOSKoC8",
+         "plus_code" : {
+            "compound_code" : "WR58+C2 Nottingham",
+            "global_code" : "9C4WWR58+C2"
+         },
+         "rating" : 0,
+         "reference" : "ChIJ1U-sfYjCeUgRe4uPqOSKoC8",
+         "scope" : "GOOGLE",
+         "types" : [ "health", "point_of_interest", "establishment" ],
+         "user_ratings_total" : 0,
+         "vicinity" : "Clifton, Nottingham"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : {
+            "location" : {
+               "lat" : 52.94367,
+               "lng" : -1.184779
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 52.94496822989272,
+                  "lng" : -1.183336120107278
+               },
+               "southwest" : {
+                  "lat" : 52.94226857010728,
+                  "lng" : -1.186035779892722
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/doctor-71.png",
+         "id" : "9c153225f4da0ab36117f0bcf2825ab2019ec4c1",
+         "name" : "Nottingham Children's Hospital",
+         "photos" : [
+            {
+               "height" : 4032,
+               "html_attributions" : [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/102545022678452903055\"\u003eRapicam Media Google Tours\u003c/a\u003e"
+               ],
+               "photo_reference" : "CmRaAAAAoaYKIk_26X4lLL1c0QCOQZ14zU1aAHCKJd_AzgmHQxjt-k0DSUOq6_ehifCh3_cuEg5i-JW8kEuyioy_7-Y_hTobXUwSsrAjlwuJUBCVwbjj-RPbgyrYTuw9-K7Ll1A3EhAfQW7X5YmbvNbHX8PUxKDpGhREb_5f9SooLos7AdEBU5qZn4piLQ",
+               "width" : 3024
+            }
+         ],
+         "place_id" : "ChIJ0cZ_nBrCeUgRvieCFBgPCYM",
+         "plus_code" : {
+            "compound_code" : "WRV8+F3 Nottingham",
+            "global_code" : "9C4WWRV8+F3"
+         },
+         "rating" : 5,
+         "reference" : "ChIJ0cZ_nBrCeUgRvieCFBgPCYM",
+         "scope" : "GOOGLE",
+         "types" : [ "hospital", "health", "point_of_interest", "establishment" ],
+         "user_ratings_total" : 2,
+         "vicinity" : "Queen's Medical Centre, Derby Rd, Nottingham"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : {
+            "location" : {
+               "lat" : 52.95065959999999,
+               "lng" : -1.1795765
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 52.95213312989272,
+                  "lng" : -1.178326470107278
+               },
+               "southwest" : {
+                  "lat" : 52.94943347010727,
+                  "lng" : -1.181026129892722
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/generic_business-71.png",
+         "id" : "c427de96b60320fc489092483abe50d84c5b2982",
+         "name" : "Dr K Morar - Derby Road Health Centre",
+         "place_id" : "ChIJubBbkh7CeUgRAVs9ctv5C_E",
+         "plus_code" : {
+            "compound_code" : "XR2C+75 Nottingham",
+            "global_code" : "9C4WXR2C+75"
+         },
+         "rating" : 0,
+         "reference" : "ChIJubBbkh7CeUgRAVs9ctv5C_E",
+         "scope" : "GOOGLE",
+         "types" : [ "doctor", "health", "point_of_interest", "establishment" ],
+         "user_ratings_total" : 0,
+         "vicinity" : "336 Derby Rd, Lenton, Nottingham"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : {
+            "location" : {
+               "lat" : 52.9037835,
+               "lng" : -1.1763322
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 52.90520402989272,
+                  "lng" : -1.175225720107278
+               },
+               "southwest" : {
+                  "lat" : 52.90250437010727,
+                  "lng" : -1.177925379892722
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/civic_building-71.png",
+         "id" : "3f918d0bde4bbb81df373e7ad40c98f18280d998",
+         "name" : "Clifton Medical Practice",
+         "opening_hours" : {
+            "open_now" : false
+         },
+         "place_id" : "ChIJsbp3UIzCeUgR-Raac-_2RWo",
+         "plus_code" : {
+            "compound_code" : "WR3F+GF Nottingham",
+            "global_code" : "9C4WWR3F+GF"
+         },
+         "rating" : 2.4,
+         "reference" : "ChIJsbp3UIzCeUgR-Raac-_2RWo",
+         "scope" : "GOOGLE",
+         "types" : [ "health", "point_of_interest", "establishment" ],
+         "user_ratings_total" : 22,
+         "vicinity" : "Clifton Cornerstone, 571 Southchurch Dr, Clifton, Nottingham"
+      }
+   ],
+   "status" : "OK"
+}

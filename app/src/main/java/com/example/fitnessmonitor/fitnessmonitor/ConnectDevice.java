@@ -17,6 +17,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Build;
@@ -60,20 +61,7 @@ public class ConnectDevice extends AppCompatActivity {
     private String connectedAddress;
     private String connectedThreadName;
 
-    TextView myLabel;
-    EditText myTextbox;
-    BluetoothAdapter mBluetoothAdapter2;
-    BluetoothSocket mmSocket;
-    BluetoothDevice mmDevice;
-    OutputStream mmOutputStream;
-    InputStream mmInputStream;
-    Thread workerThread;
-    byte[] readBuffer;
-    int readBufferPosition;
-    int counter;
-    volatile boolean stopWorker;
-
-    // Create a BroadcastReceiver for ACTION_FOUND
+    /*Create a BroadcastReceiver for ACTION_FOUND*/
     private final BroadcastReceiver mBroadcastReceiver1 = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -170,7 +158,7 @@ public class ConnectDevice extends AppCompatActivity {
                 if (mDevice.getBondState() == BluetoothDevice.BOND_BONDED){
                     Log.d("", "BroadcastReceiver: BOND_BONDED.");
                     Toast.makeText(getApplicationContext(), "Pairing Complete", Toast.LENGTH_LONG).show();
-
+                    MainActivity.backFromActivity = 1;
                     String connectedTo = (mDevice.getName() != null) ? mDevice.getName(): ("ID - "+ mDevice.getAddress());
                     txtConnected.setText("Connected to Device: " + connectedTo);
                     lstDevices.setVisibility(View.INVISIBLE);
@@ -180,11 +168,7 @@ public class ConnectDevice extends AppCompatActivity {
                     deviceAddresses.clear();
                     deviceNames.clear();
                     devicesDisplay.clear();
-//                    try {
-//                        openBT();
-//                    } catch (Exception e){
-//
-//                    }
+
                 }
                 //case2: creating a bone
                 if (mDevice.getBondState() == BluetoothDevice.BOND_BONDING) {
@@ -197,7 +181,7 @@ public class ConnectDevice extends AppCompatActivity {
                     if(alreadyPaired.contains(mDevice.getAddress())){
                         pairDevice(deviceAddresses.indexOf(mDevice.getAddress()));
                     } else {
-                        Toast.makeText(getApplicationContext(), "Pairing Failed, Please check that the fitness device turned on.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Pairing Failed, Please check that the fitness device turned on and try again.", Toast.LENGTH_LONG).show();
                     }
                     Log.d("", "BroadcastReceiver: BOND_NONE.");
 
@@ -232,6 +216,7 @@ public class ConnectDevice extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connect_device);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         //get current screen dimensions
         Display display = getWindowManager().getDefaultDisplay();
@@ -274,17 +259,20 @@ public class ConnectDevice extends AppCompatActivity {
 
         txtConnected.setVisibility(View.INVISIBLE);
 
+        //get default adapter
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
         //check connected devices
         checkConnected();
 
         //create array adapter
         devicesArrayAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, devicesDisplay);
-        //get default adapter
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
         //get already paired devices
         pairedDevices = mBluetoothAdapter.getBondedDevices();
         for(BluetoothDevice bt : pairedDevices)
             alreadyPaired.add(bt.getAddress());
+
 
         //Broadcasts when bond state changes (ie:pairing)
         try {
@@ -441,10 +429,29 @@ public class ConnectDevice extends AppCompatActivity {
         }
     }
 
-
+    /*
+    **check for connected devices, i.e if bluetooth is on and device is paired
+    * else search for devices. NB: normally app wouldnt get here if not connected to device
+    * */
     public void checkConnected()
     {
-
+        //check if bluetooth is on and device is paired
+//        if(!(mBluetoothAdapter == null)){ //first check if device has BT
+//            if(mBluetoothAdapter.isEnabled()){
+//                for(BluetoothDevice bt: pairedDevices){
+//                    if(bt.getName() != null) {
+//                        if (bt.getName().contains("HC-05") || bt.getName().contains("HC-06")) {
+//                            String connectedTo = (bt.getName() != null) ? bt.getName() : ("ID - "+ bt.getAddress());
+//                            txtConnected.setText("Connected to Device: " + connectedTo);
+//                            lstDevices.setVisibility(View.INVISIBLE);
+//                            flList.setBackgroundResource(R.color.colorWhite);
+//                            txtConnected.setVisibility(View.VISIBLE);
+//                            break;
+//                        }
+//                    }
+//                }
+//            }
+//        }
         BluetoothAdapter.getDefaultAdapter().getProfileProxy(this, serviceListener, BluetoothProfile.HEADSET);
     }
 
@@ -512,76 +519,5 @@ public class ConnectDevice extends AppCompatActivity {
 //
 //        }
     };
-
-    void openBT() throws IOException
-    {
-        UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //Standard SerialPortService ID
-        mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
-        mmSocket.connect();
-        mmOutputStream = mmSocket.getOutputStream();
-        mmInputStream = mmSocket.getInputStream();
-
-        beginListenForData();
-
-        myLabel.setText("Bluetooth Opened");
-    }
-
-    void beginListenForData()
-    {
-        final Handler handler = new Handler();
-        final byte delimiter = 10; //This is the ASCII code for a newline character
-
-        stopWorker = false;
-        readBufferPosition = 0;
-        readBuffer = new byte[1024];
-        workerThread = new Thread(new Runnable()
-        {
-            public void run()
-            {
-                while(!Thread.currentThread().isInterrupted() && !stopWorker)
-                {
-                    try
-                    {
-                        int bytesAvailable = mmInputStream.available();
-                        if(bytesAvailable > 0)
-                        {
-                            byte[] packetBytes = new byte[bytesAvailable];
-                            mmInputStream.read(packetBytes);
-                            for(int i=0;i<bytesAvailable;i++)
-                            {
-                                byte b = packetBytes[i];
-                                if(b == delimiter)
-                                {
-                                    byte[] encodedBytes = new byte[readBufferPosition];
-                                    System.arraycopy(readBuffer, 0, encodedBytes, 0, encodedBytes.length);
-                                    final String data = new String(encodedBytes, "US-ASCII");
-                                    System.out.println(data);
-                                    readBufferPosition = 0;
-
-                                    handler.post(new Runnable()
-                                    {
-                                        public void run()
-                                        {
-                                            myLabel.setText(data);
-                                        }
-                                    });
-                                }
-                                else
-                                {
-                                    readBuffer[readBufferPosition++] = b;
-                                }
-                            }
-                        }
-                    }
-                    catch (IOException ex)
-                    {
-                        stopWorker = true;
-                    }
-                }
-            }
-        });
-
-        workerThread.start();
-    }
 
 }
