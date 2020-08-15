@@ -1,4 +1,14 @@
 # Remote-Fitness-Monitoring-Mobile-App
+
+## Home
+![](screenshots/new_home.jpg)
+## functions
+![](screenshots/new_slider.jpg)
+![](screenshots/new_daily_analysis.jpg)
+![](screenshots/nearest_health_centers.jpg)
+# Remote monitoring
+![](screenshots/web_app_1.png)
+
 MSc Project, Health and Fitness Monitoring Mobile App that is linked to PC Software to perform data analysis. Written in native Java.
 
 #Main Features 
