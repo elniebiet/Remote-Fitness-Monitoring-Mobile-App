@@ -1,5 +1,9 @@
 package com.example.fitnessmonitor.fitnessmonitor;
 
+/**
+ * Created by Aniebiet Akpan.
+ */
+
 import android.Manifest;
 import android.app.Fragment;
 import android.content.BroadcastReceiver;

@@ -1,5 +1,8 @@
 package com.example.fitnessmonitor.fitnessmonitor;
 
+/**
+ * Created by Aniebiet Akpan.
+ */
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;

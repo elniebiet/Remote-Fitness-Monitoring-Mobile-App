@@ -1,5 +1,9 @@
 package com.example.fitnessmonitor.fitnessmonitor;
 
+/**
+ * Created by Aniebiet Akpan
+ */
+
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.bluetooth.BluetoothAdapter;

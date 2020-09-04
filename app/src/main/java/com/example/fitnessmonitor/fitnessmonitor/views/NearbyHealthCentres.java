@@ -1,5 +1,7 @@
 package com.example.fitnessmonitor.fitnessmonitor.views;
-
+/**
+ * Created by Aniebiet Akpan.
+ */
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;

@@ -10,7 +10,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 /**
- * Created by root on 22/06/20.
+ * Created by Aniebiet Akpan on 22/06/20.
  */
 
 public class CircleView extends View
