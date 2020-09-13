@@ -1,7 +1,7 @@
 # Remote-Fitness-Monitoring-Mobile-App
 
 ## Home
-![](screenshots/new_home.jpg)
+![](screenshots/new_home.jpg | width=250 | height = 500)
 ## functions
 ![](screenshots/new_slider.jpg)
 ![](screenshots/new_daily_analysis.jpg)
