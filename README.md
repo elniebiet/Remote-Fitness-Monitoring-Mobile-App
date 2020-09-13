@@ -1,7 +1,7 @@
 # Remote-Fitness-Monitoring-Mobile-App
 
 ## Home
-<img src="screenshots/new_home.jpg" alt="home" width="250" height="500"/>
+<img src="screenshots/new_home.jpg" alt="home" width="250" height="500" style="position: center;"/>
 
 ## functions
 <img src="screenshots/new_slider.jpg" alt="slider" width="250" height="500"/>
