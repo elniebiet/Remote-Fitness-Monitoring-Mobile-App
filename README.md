@@ -9,11 +9,11 @@
 <img src="screenshots/nearest_health_centers.jpg" alt="health centres" width="250" height="500"/>
 
 ## Remote monitoring
-<img src="screenshots/web_app_1.png" alt="web app" width="250" height="500"/>
+<img src="screenshots/web_app_1.png" alt="web app" width="1080" height="540"/>
 
 MSc Project, Health and Fitness Monitoring Mobile App that is linked to PC Software to perform data analysis. Written in native Java.
 
-## Main Features 
+# Main Features 
 ## Device connection: 
 This feature allows a user to search for available fitness devices
 and connect the app. A filtered search is implemented so other Bluetooth devices are
