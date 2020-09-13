@@ -2,6 +2,7 @@
 
 ## Home
 ![](screenshots/new_home.jpg =250x)
+<img src="screenshots/new_home.jpg" alt="home" width="250"/>
 ## functions
 ![](screenshots/new_slider.jpg)
 ![](screenshots/new_daily_analysis.jpg)
