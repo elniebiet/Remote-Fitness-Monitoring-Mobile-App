@@ -3,11 +3,11 @@
 ## Home
 <img src="screenshots/new_home.jpg" alt="home" width="250" height="500"/>
 ## functions
-![](screenshots/new_slider.jpg)
-![](screenshots/new_daily_analysis.jpg)
-![](screenshots/nearest_health_centers.jpg)
+<img src="screenshots/new_slider.jpg" alt="slider" width="250" height="500"/>
+<img src="screenshots/new_daily_analysis.jpg" alt="daily_analysis" width="250" height="500"/>
+<img src="screenshots/nearest_health_centers.jpg" alt="health centres" width="250" height="500"/>
 # Remote monitoring
-![](screenshots/web_app_1.png)
+<img src="screenshots/web_app_1.png" alt="web app" width="250" height="500"/>
 
 MSc Project, Health and Fitness Monitoring Mobile App that is linked to PC Software to perform data analysis. Written in native Java.
 
