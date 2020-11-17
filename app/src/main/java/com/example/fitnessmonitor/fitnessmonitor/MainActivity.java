@@ -109,7 +109,6 @@ public class MainActivity extends AppCompatActivity
     private Menu sidebarMenu = null;
     private MenuItem socialDist = null;
     private Boolean socialDistEnabled = false;
-//    private TextView txtStatus;
     private ImageView imgStatus;
     private int currBodyTemp = 0;
     private int currHeartRate = 0;
@@ -127,7 +126,7 @@ public class MainActivity extends AppCompatActivity
     private EditText txtRecom;
     private static int currentNumSteps = 0;
     public static int deviceDiscoverable = 0;
-    public static String domainName  = "http://172.17.0.1:8080/";
+    public static String domainName  = "http://172.17.0.1:8080/"; //domain server ip address
     public static String listeningForPermissionRequestsAPI = domainName + "api/permissions/checkrequests/";
     public static String grantPermissionAPIUrl = domainName + "api/permissions";
     public static String updateFitnessAPIUrl = domainName + "api/fitnessupdate";
