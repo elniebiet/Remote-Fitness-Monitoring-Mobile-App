@@ -1,5 +1,7 @@
 # Remote-Fitness-Monitoring-Mobile-App
 
+See published paper journal: https://ieeexplore.ieee.org/document/9309607
+
 ## Home
 <img src="screenshots/new_home.jpg" alt="home" width="250" height="500"/>
 
