@@ -13,7 +13,7 @@ See published paper journal: https://ieeexplore.ieee.org/document/9309607
 ## Remote monitoring
 <img src="screenshots/web_app_1.png" alt="web app" width="1080" height="540"/>
 
-MSc Project, Health and Fitness Monitoring Mobile App that is linked to PC Software to perform data analysis. Written in native Java.
+Health and Fitness Monitoring Mobile App that is linked to PC Software to perform data analysis. Written in native Java
 
 # Main Features 
 ## Device connection: 
